@@ -1,0 +1,67 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ 
+ //1.递归
+class Solution {
+public:
+    bool isValidBSTCore(TreeNode* root, long long samll, long long big)
+    {
+        if(!root)
+            return true;
+        if(root->val<=samll||root->val>=big)
+            return false;
+        return isValidBSTCore(root->left,samll,root->val)&&isValidBSTCore(root->right,root->val,big);
+    }
+    bool isValidBST(TreeNode* root) {       
+        return isValidBSTCore(root,LONG_MIN,LONG_MAX);
+    }
+};
+
+//2.1中序遍历-递归
+class Solution {
+public:
+    long long small = LONG_MIN;
+    bool isValidBST(TreeNode* root) {
+        if(root)
+        {
+            if(!isValidBST(root->left))
+                return false;//访问左子树
+            if(root->val<=small)
+                return false;
+            small = root->val;
+            return isValidBST(root->right);
+        }
+        else
+            return true;
+    }
+};
+
+//2.2中序遍历-迭代
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        stack<TreeNode*> stack;
+        long long inorder = (long long)INT_MIN - 1;
+
+        while (!stack.empty() || root != nullptr) {
+            while (root != nullptr) {
+                stack.push(root);
+                root = root -> left;
+            }
+            root = stack.top();
+            stack.pop();
+            // 如果中序遍历得到的节点的值小于等于前一个 inorder，说明不是二叉搜索树
+            if (root -> val <= inorder) return false;
+            inorder = root -> val;
+            root = root -> right;
+        }
+        return true;
+    }
+};

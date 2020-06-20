@@ -1,0 +1,34 @@
+class Solution {
+public:
+    vector<vector<int>> result;
+    vector<vector<int>> permuteUnique(vector<int>& nums) {     
+        vector<int> track;
+        vector<bool> visited(nums.size(),false);
+        sort(nums.begin(), nums.end());
+        backtrack(nums,track,visited);
+        return result;
+    }
+
+    void backtrack(vector<int>& nums, vector<int>& track, vector<bool>& visited)
+    {
+        if(track.size()==nums.size())
+        {
+            result.push_back(track);
+            return;
+        }
+        for(int i=0;i<nums.size();++i)
+        {
+            if(!visited[i])
+            {
+                //确保i-1有意义;判断数字nums[i]是否重复;判断它前面的字符是否被访问(没有被访问则退出：和前一种互换结果一样)
+                if(i>0&&nums[i]==nums[i-1]&&!visited[i-1])
+                    continue;
+                track.push_back(nums[i]);
+                visited[i] = true;
+                backtrack(nums, track, visited);
+                visited[i] = false;
+                track.pop_back();
+            }
+        }
+    }
+};

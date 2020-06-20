@@ -1,0 +1,27 @@
+class Solution {
+public:
+vector<vector<int>> result;
+    vector<vector<int>> combine(int n, int k) {
+        if(k<=0||n<=0)
+            return result;
+        vector<int> track;//路径纪录
+        backtrack(n, k, 1, track);
+        return result;
+    }
+    void backtrack(int n, int k, int start, vector<int>& track)
+    {
+        // 到达树的底部
+        if(track.size()==k)
+        {
+            result.push_back(track);
+            return;
+        }
+        //n表示了树的宽度
+        for(int i=start;i<=n;++i)
+        {
+            track.push_back(i);
+            backtrack(n, k, i+1,track);
+            track.pop_back();
+        }
+    }
+};

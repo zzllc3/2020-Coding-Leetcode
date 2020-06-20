@@ -1,0 +1,43 @@
+//递归：时间复杂度高
+class Solution {
+public:
+    vector<vector<int>> subsets(vector<int>& nums) {
+    // base case，返回一个空集
+    if (nums.empty()) return {{}};
+    // 把最后一个元素拿出来
+    int n = nums.back();
+    nums.pop_back();
+    // 先递归算出前面元素的所有子集
+    vector<vector<int>> res = subsets(nums);
+
+    int size = res.size();
+    for (int i = 0; i < size; i++) {
+        // 然后在之前的结果之上追加
+        res.push_back(res[i]);
+        res.back().push_back(n);
+    }
+    return res;
+}
+};
+
+//回溯
+class Solution {
+public:
+vector<vector<int>> result;
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<int> track;//路径纪录
+        backtrack(nums,0,track);
+        return result;
+    }
+    void backtrack(vector<int>& nums, int start, vector<int>& track)
+    {
+        result.push_back(track);
+        //start设置是为了防止加入同一个数
+        for(int i=start;i<nums.size();++i)
+        {
+            track.push_back(nums[i]);
+            backtrack(nums,i+1,track);
+            track.pop_back();
+        }
+    }
+};

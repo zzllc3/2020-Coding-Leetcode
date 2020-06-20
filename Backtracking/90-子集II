@@ -1,0 +1,26 @@
+//回溯中剪枝
+class Solution {
+public:
+vector<vector<int>> result;
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<int> track;//路径纪录
+        sort(nums.begin(), nums.end());
+        backtrack(nums,0,track);
+
+        return result;
+    }
+    void backtrack(vector<int>& nums, int start, vector<int>& track)
+    {
+        result.push_back(track);
+        //start设置是为了防止加入同一个数
+        for(int i=start;i<nums.size();++i)
+        {
+            //从每一层的第二个元素开始（防止不同层第一个重复）；剪枝发生在递归树同一层
+            if(i>start&&nums[i-1]==nums[i])
+                continue;
+            track.push_back(nums[i]);
+            backtrack(nums,i+1,track);
+            track.pop_back();
+        }
+    }
+};

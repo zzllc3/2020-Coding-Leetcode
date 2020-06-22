@@ -1,0 +1,67 @@
+//回溯
+class Solution {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<int> track;
+        vector<bool> visited(candidates.size(),false);
+        sort(candidates.begin(), candidates.end());
+        backtrack(-1,candidates,track,target, visited);
+        return result;
+    }
+private:
+    vector<vector<int>> result;
+    void backtrack(int start, vector<int>& candidates, vector<int>& track, int target, vector<bool> & visited)
+    {
+        if(target==0)
+        {   
+            result.push_back(track);
+            return;
+        }
+        for(int i=start+1;i<candidates.size();++i)
+        {
+            if(!visited[i])
+            {
+                if(target<0)
+                    continue;
+                if(i>0&&candidates[i]==candidates[i-1]&&!visited[i-1])
+                    continue;
+                track.push_back(candidates[i]);
+                visited[i] = true;
+                backtrack(i,candidates,track,target-candidates[i], visited);
+                track.pop_back();
+                visited[i] = false;               
+            }Q
+        }
+    }
+};
+
+//回溯
+class Solution {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<int> track;
+        sort(candidates.begin(), candidates.end());
+        backtrack(-1,candidates,track,target);
+        return result;
+    }
+private:
+    vector<vector<int>> result;
+    void backtrack(int start, vector<int>& candidates, vector<int>& track, int target)
+    {
+        if(target==0)
+        {   
+            result.push_back(track);
+            return;
+        }
+        for(int i=start+1;i<candidates.size();++i)
+        {
+            if(target<0)
+                continue;
+            if(i>start+1&&candidates[i]==candidates[i-1])
+                continue;
+            track.push_back(candidates[i]);
+            backtrack(i,candidates,track,target-candidates[i]);
+            track.pop_back();          
+        }
+    }
+};

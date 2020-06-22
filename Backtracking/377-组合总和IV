@@ -1,0 +1,45 @@
+//回溯:超时
+class Solution {
+public:
+    int combinationSum4(vector<int>& candidates, int target) {
+        vector<int> track;
+        sort(candidates.begin(), candidates.end());
+        backtrack(candidates,track,target);
+        return result.size();
+    }
+private:
+    vector<vector<int>> result;
+    //去重
+    void backtrack(vector<int>& candidates, vector<int>& track, int target)
+    {
+        if(target==0)
+        {   
+            result.push_back(track);
+            return;
+        }
+        for(int i=0;i<candidates.size();++i)
+        {
+            if(target<0)
+                continue;
+            track.push_back(candidates[i]);
+            backtrack(candidates,track,target-candidates[i]);
+            track.pop_back();
+        }
+    }
+};
+
+//动态规划
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        vector<int> dp(target + 1, 0);
+        dp[0] = 1;
+        for (int i = 0; i <= target; i++) {
+            for (int j = 0; j < nums.size(); j++) {
+                if (i < nums[j]) continue;
+                dp[i] = (dp[i] >= INT_MAX - dp[i - nums[j]]) ? INT_MAX : dp[i] + dp[i - nums[j]];
+            }
+        }
+        return dp[target];
+    }
+};

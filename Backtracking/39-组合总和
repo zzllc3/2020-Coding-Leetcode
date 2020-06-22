@@ -1,0 +1,47 @@
+//回溯
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<int> track;
+        sort(candidates.begin(), candidates.end());
+        backtrack(0,candidates,track,target);
+        return result;
+    }
+private:
+    vector<vector<int>> result;
+    //去重
+    void backtrack(int start, vector<int>& candidates, vector<int>& track, int target)
+    {
+        if(target==0)
+        {   
+            result.push_back(track);
+            return;
+        }
+        for(int i=start;i<candidates.size();++i)
+        {
+            if(target<0)
+                continue;
+            track.push_back(candidates[i]);
+            backtrack(i,candidates,track,target-candidates[i]);
+            track.pop_back();
+        }
+    }
+};
+
+//动态规划-背包问题
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<vector<int> > > path(target + 1);
+        path[0] = {{}};
+        for (auto x : candidates) {
+            for (int i = x; i <= target; ++i) {
+                for (auto v : path[i - x]) {
+                    v.push_back(x);
+                    path[i].push_back(v);
+                }
+            }
+        }
+        return path[target];
+    }
+};

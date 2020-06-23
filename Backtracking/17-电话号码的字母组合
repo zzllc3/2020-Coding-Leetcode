@@ -1,0 +1,32 @@
+//回溯
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if(digits.empty())
+            return result;
+
+        backtrack(digits,0);
+        return result;
+    }
+private:
+    string track;
+    vector<string> result;
+    string dic[10]= {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    void backtrack(string& digits, int k)
+    {
+        if(digits.size()==k)
+        {
+            result.push_back(track);
+            return;
+        }
+        int num = digits[k]-'0';
+        for(int i=0;i<dic[num].size();++i)
+        {
+            track.push_back(dic[num][i]);
+            backtrack(digits,k+1);
+            track.pop_back();
+        }
+    }
+};
+
+

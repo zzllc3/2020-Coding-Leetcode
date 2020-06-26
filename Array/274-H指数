@@ -1,0 +1,36 @@
+//c3
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        if(citations.size()==0)
+            return 0;
+        sort(citations.begin(),citations.end());
+        int count = 0;
+        int result = 0;;
+        for(int i=citations.size()-1;i>=0;--i)
+        {
+            count++;
+            if(citations[i]>=count)
+            {
+                result = max(count,result);
+            }
+        }
+        return result;
+    }
+};
+
+//计数
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        int len = citations.size();
+        vector<int> papers(len+1);
+        //计数
+        for(int c:citations)
+            papers[min(len,c)]++;//不超过len
+        int result = len;
+        for(int i = papers[len];result>i;i+=papers[result])
+            result--;
+        return result;
+    }
+};

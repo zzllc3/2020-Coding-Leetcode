@@ -1,0 +1,48 @@
+//动态规划
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        auto wordDictSet = unordered_set<string>();
+        for(auto word:wordDict)
+        {
+            wordDictSet.insert(word);
+        }
+        auto dp = vector<bool>(s.size()+1);
+        dp[0] = true;
+        for(int i=1;i<=s.size();++i)
+        {
+            for(int j=0;j<i;++j)
+            {
+                if(dp[j]&&wordDictSet.find(s.substr(j,i-j))!=wordDictSet.end())
+                {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp[s.size()];
+    }
+};
+
+//回溯
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {    
+        set<string> word(wordDict.begin(),wordDict.end());  
+        vector<int> memo(s.size(), -1);
+        return dfs(s,word,memo,0);
+    }
+
+    bool dfs(string s,set<string>& word,vector<int>& memo,int start){
+        if(start > s.size() - 1) return true;
+        if(memo[start] != -1) return memo[start];
+        for(int end = start + 1;end <= s.size();++end){
+            if(word.find(s.substr(start,end - start)) != word.end() && dfs(s,word,memo,end)){
+                memo[start] = 1;
+                return true;
+            }
+        }
+        memo[start] = 0;
+        return false;
+    }
+};

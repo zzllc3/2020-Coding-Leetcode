@@ -1,0 +1,38 @@
+//c3二分
+class Solution {
+public:
+    bool isPerfectSquare(int num) {
+        if(num==1)
+            return true;
+        long l = 1;
+        long r = num;
+        while(l<r)
+        {
+            long mid = l+(r-l)/2;
+            if(mid==l||mid==r)
+                return false;
+            if(mid*mid==num)
+                return true;
+            if(mid*mid<num)
+                l = mid;
+            if(mid*mid>num)
+                r = mid;
+        }    
+        return false;
+    }
+};
+
+//完全平方数等于奇数和
+class Solution {
+public:
+    bool isPerfectSquare(int num) {
+        int num1 = 1;
+        while (num > 0){
+            num -= num1;
+            num1 += 2;
+        }
+        return num == 0;
+
+    }
+};
+

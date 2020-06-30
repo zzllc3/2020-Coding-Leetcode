@@ -1,0 +1,35 @@
+//暴力超时
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int result = 0;
+        for(int i=0;i<height.size();++i)
+        {
+            for(int j=i+1;j<height.size();++j)
+            {
+                result = max(result,min(height[i],height[j])*(j-i));
+            }
+        }
+        return result;
+    }   
+};
+
+//双指针
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int l = 0, r = height.size() - 1;
+        int ans = 0;
+        while (l < r) {
+            int area = min(height[l], height[r]) * (r - l);
+            ans = max(ans, area);
+            if (height[l] <= height[r]) {
+                ++l;
+            }
+            else {
+                --r;
+            }
+        }
+        return ans;
+    }
+};

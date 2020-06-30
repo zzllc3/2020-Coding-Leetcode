@@ -1,0 +1,20 @@
+//二分搜索
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        if(citations.size()==0||citations.back()==0)
+            return 0;
+        int len = citations.size();
+        int l = 0;
+        int r = len-1;
+        while(l<r)
+        {
+            int mid = l+(r-l)/2;
+            if(citations[mid]>=len-mid)
+                r = mid;
+            else
+                l = mid+1;
+        }
+        return len-l;
+    }
+};

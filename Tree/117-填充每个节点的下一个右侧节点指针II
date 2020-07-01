@@ -1,0 +1,129 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+*/
+
+//O(N)
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)   return root;
+        queue<Node*> q;
+        Node* flag = new Node; // 用于记录每层树的结束。
+        Node* last = new Node; // 用于记录上一个节点，将上一个节点的next连接当前节点。
+
+        q.push(root); // 根推入队列
+        q.push(flag); // 第一层结束，用flag标记位置
+        while(q.size() >= 2){ //队列内到最后存在一个flag，因此 >2
+            Node* now = q.front(); // 取出当前节点。
+            q.pop();
+            if(now == flag){ // 如果到达每层末尾，last清空，再次推入flag
+                //last -> next = NULL;
+                last = NULL;
+                q.push(flag);
+                continue;
+            }
+            if(last == NULL){ // 说明是新的一层
+                last = now; 
+            }
+            else{ // 否则一定存在last节点
+                last -> next = now;
+                last = now; // 更新last节点
+            }
+            if(now -> left){ 
+                q.push(now -> left);
+
+            }
+            if(now -> right){ 
+                q.push(now -> right);
+            }
+        }
+        return root; 
+    }
+};
+
+//O(N)
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if (root == nullptr)
+        {
+            return root;
+        }
+        queue<Node*> q;
+        q.push(root);
+        while (!q.empty())
+        {
+            int size = q.size(); //当前层size
+            for (int i = 0; i < size; ++i)
+            {
+                Node* node = q.front();
+                q.pop();
+                if (i < size - 1)
+                {
+                    node->next = q.front(); //设置next指针
+                }
+                if (node->left)
+                {
+                    q.push(node->left);
+                }
+                if (node->right)
+                {
+                    q.push(node->right);
+                }
+            }
+        }
+
+        return root;
+    }
+};
+
+//O(1)
+class Solution {
+public:
+    Node* prev = NULL, *leftmost = NULL;
+    Node* connect(Node* root) 
+    {
+        if (!root) 
+            return root;
+        leftmost = root;
+
+        while (leftmost) {
+            prev = NULL;
+            Node* curr = leftmost;
+            leftmost = NULL;
+            while (curr) {
+                processChild(curr->left);
+                processChild(curr->right);
+                curr = curr->next;
+            }
+        }
+        return root;
+    }
+
+    void processChild(Node* child) {
+        if (!child) return;
+        if (prev) 
+        {
+            prev->next = child;//左边有，链接
+        } 
+        else 
+        {
+            leftmost = child;//左边没有，该层最左
+        }
+        prev = child;
+    }
+};

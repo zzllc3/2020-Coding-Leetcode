@@ -1,0 +1,33 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+//递归
+class Solution {
+public:
+    unordered_map<int,int> map;
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        if(inorder.empty())
+            return nullptr;
+        for(int i=0;i<inorder.size();++i)
+        {
+            map[inorder[i]] = i;
+        }return build(inorder, preorder, 0, inorder.size() - 1, 0, preorder.size() - 1);
+    }
+    TreeNode* build(vector<int>& inorder, vector<int>& preorder, int inL,int inR, int pL, int pR)//中序，前序的下标范围
+    {
+        if (pL > pR) 
+            return nullptr;//下标超过了，说明则该子树为空
+        TreeNode * root = new TreeNode(preorder[pL]);
+        int index = map[preorder[pL]];
+        root->left = build(inorder,preorder,inL,index-1,pL+1,pL+1+(index-1-inL));
+        root->right = build(inorder,preorder,index+1,inR,pR-(inR-(index+1)),pR);
+        return root;
+    }
+};

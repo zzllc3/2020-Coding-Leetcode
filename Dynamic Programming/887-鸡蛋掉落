@@ -1,0 +1,71 @@
+//动态规划,线性搜索(超时)
+class Solution {
+public:
+    int help(vector<vector<int>>& memo, int K, int N)
+    {
+        //base
+        if(K==1)
+            return N;
+        if(N==0)
+            return 0;
+        if(memo[K][N]!=0)
+            return memo[K][N];
+        int res = INT_MAX;
+        for(int i=1;i<=N;++i)
+        {
+            //最坏情况下的最少扔鸡蛋次数
+            res = min(res,max(help(memo,K,N-i),help(memo,K-1,i-1))+1);
+            //没碎，碎了
+        }
+        memo[K][N] = res;
+        return res;
+    }
+
+    int superEggDrop(int K, int N) {
+        vector<vector<int>> memo(K+1,vector<int>(N+1,0));
+        //当前状态为 k 个鸡蛋，面对 n 层楼,返回这个状态下最少的扔鸡蛋次数
+        return help(memo, K,N);
+    }
+};
+
+//动态规划,二分搜索
+class Solution {
+public:
+    int help(vector<vector<int>>& memo, int K, int N)
+    {
+        //base
+        if(K==1)
+            return N;
+        if(N==0)
+            return 0;
+        if(memo[K][N]!=0)
+            return memo[K][N];
+        int res = INT_MAX;
+        int lo = 1,hi = N;
+        while(lo<=hi)
+        {
+            int mid = (lo+hi)/2;
+            int broke = help(memo,K-1,mid-1);
+            int unbroke = help(memo,K,N-mid);
+            //res = min(max(碎，没碎) + 1)
+            if(broke>unbroke)
+            {
+                hi = mid - 1;
+                res = min(res,broke+1);
+            }
+            else
+            {
+                lo = mid + 1;
+                res = min(res,unbroke+1);
+            }
+        }
+        memo[K][N] = res;
+        return res;
+    }
+
+    int superEggDrop(int K, int N) {
+        vector<vector<int>> memo(K+1,vector<int>(N+1,0));
+        //当前状态为 k 个鸡蛋，面对 n 层楼,返回这个状态下最少的扔鸡蛋次数
+        return help(memo, K,N);
+    }
+};

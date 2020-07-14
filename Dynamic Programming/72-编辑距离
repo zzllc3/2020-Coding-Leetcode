@@ -1,0 +1,33 @@
+//动态规划，自底向上
+class Solution {
+public:
+    int minn(int a, int b, int c)
+    {
+        return min(a,min(b,c));
+    }
+
+    int minDistance(string word1, string word2) {
+        int m = word1.length(),n = word2.length();
+        //dp[i][j]返回 s1[0..i] 和 s2[0..j] 的最小编辑距离
+        vector<vector<int>> dp(m+1,vector<int>(n+1,0));
+        //base
+        //i走完s1或j走完s2，可以直接返回另一个字符串剩下的长度
+        for (int i = 1; i <= m; i++)
+            dp[i][0] = i;
+        for (int j = 1; j <= n; j++)
+            dp[0][j] = j;
+        for(int i=1;i<=m;++i)
+        {
+            for(int j=1;j<=n;++j)
+            {
+                if(word1[i-1]==word2[j-1])
+                    dp[i][j] = dp[i-1][j-1];//相等，指针后移
+                else
+                {
+                    dp[i][j] = minn(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+1);//删除，插入，替换
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};

@@ -1,0 +1,57 @@
+//回溯（超时）
+class Solution {
+public:
+    int res = INT_MIN; 
+    int maxCoins(vector<int>& nums) {
+        backtrack(nums,0);
+        return res;
+    }
+    void backtrack(vector<int>& nums, int score)
+    {
+        //结束条件
+        if(nums.empty())
+        {
+            res = max(res,score);
+            return;
+        }
+        for(int i=0;i<nums.size();++i)
+        {
+            //选择
+            int curscore;
+            curscore =  nums[i] * (i - 1 < 0 ? 1 : nums[i-1]) * (i + 1 >= nums.size() ? 1 : nums[i+1]);
+            int temp = nums[i];
+            nums.erase(nums.begin()+i);
+            //回溯
+            backtrack(nums,score+curscore);
+            //撤销
+            nums.insert(nums.begin()+i,temp);
+        }
+    }
+};
+
+//动态规划
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> point(n+2,0);
+        point[0] = point[n+1] = 1;
+        for(int i=1;i<=n;++i)
+            point[i] = nums[i-1];
+        vector<vector<int>> dp(n+2,vector<int>(n+2,0));
+        //戳破气球i和j之间（不含ij）所有气球，可获得最高分数dp[i][j]
+        for(int i=n;i>=0;--i)
+        //遍历顺序基于最终计算结果dp[0][n+1],i从下往上j从左到右
+        {
+            for(int j=i+1;j<n+2;++j)
+            {
+                for(int k=i+1;k<j;++k)
+                //最后戳破k
+                {
+                    dp[i][j] = max(dp[i][j],dp[i][k]+dp[k][j]+point[i]*point[k]*point[j]);
+                }
+            }
+        }
+        return dp[0][n+1];
+    }
+};

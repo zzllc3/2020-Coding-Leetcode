@@ -1,0 +1,275 @@
+//单链表
+class MyLinkedList {
+private:
+    struct Node{
+        int val;
+        Node* next;
+        Node(int x, Node* node): val(x), next(node) {}
+    };
+    Node* head;
+    int size;
+
+public:
+    /** Initialize your data structure here. */
+    MyLinkedList() {
+        head = nullptr;
+        size = 0;
+    }
+    
+    /** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
+    int get(int index) {
+        if (index < 0 || index >= size) 
+            return -1;
+        Node* p = head;
+        int i = 0;
+        while(i < index)
+        {
+            p = p->next; 
+            i++;
+        }
+        return p->val;
+    }
+    
+    /** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
+    void addAtHead(int val) {
+        Node* p = new Node(val ,head);
+        head = p;
+        ++size;
+    }
+    
+    /** Append a node of value val to the last element of the linked list. */
+    void addAtTail(int val) {
+        Node* p = head;
+        while(p->next)
+            p = p->next;
+        p->next = new Node(val, NULL);
+        ++size;
+    }
+    
+    /** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
+    void addAtIndex(int index, int val) {
+        if(index > size)
+            return;
+        if (index <= 0) 
+        {
+            addAtHead(val); 
+            return;
+        }
+        Node* p = head;
+        int i = 0;
+        while(i < index-1) 
+        {
+            p = p->next;
+            i++;
+        }
+        Node* q = new Node(val, p->next);
+        // Node* q; 
+        // q->next = p->next;
+        // p->next = q;
+        // q->val = val;
+        p->next = q;
+        ++size;
+    }
+    
+    /** Delete the index-th node in the linked list, if the index is valid. */
+    void deleteAtIndex(int index) {
+        if(index < 0 || index >= size) 
+            return;
+        if(index == 0) 
+        {
+            head = head->next;
+            --size;
+            return;
+        }
+        Node* p = head;
+        int i = 0;
+        while(i < index-1) 
+        {
+            p = p->next;
+            i++;
+        }
+        p->next = p->next->next;
+        --size;
+    }
+};
+
+/**
+ * Your MyLinkedList object will be instantiated and called as such:
+ * MyLinkedList* obj = new MyLinkedList();
+ * int param_1 = obj->get(index);
+ * obj->addAtHead(val);
+ * obj->addAtTail(val);
+ * obj->addAtIndex(index,val);
+ * obj->deleteAtIndex(index);
+ */
+
+//双链表
+class MyLinkedList {
+private:
+    struct ListNode
+    {
+        int val;
+        ListNode *prev, *next;
+        ListNode(int x) : val(x), next(nullptr), prev(nullptr){}
+    };
+    ListNode *head, *tail;
+    int size = 0;
+
+public:
+    /** Initialize your data structure here. */
+    MyLinkedList() {
+        head = NULL;
+        tail = NULL;
+        size = 0;
+    }
+    
+    /** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
+    int get(int index) {
+        int i = 0;
+        ListNode *p = head;
+        while(p && i < index)
+        {
+            p  =p->next;
+            i++;
+        }
+        if(p)
+            return p->val;
+        else
+            return -1;
+    }
+    
+    /** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
+    void addAtHead(int val) {
+        if(!head)
+        {
+            head = new ListNode(val);
+            tail = head;
+        }
+        else
+        {
+            ListNode *p = new ListNode(val);
+            p->next = head;
+            head->prev = p;
+            head = p;
+        }
+        size++;
+    }
+    
+    /** Append a node of value val to the last element of the linked list. */
+    void addAtTail(int val) {
+        if(!tail)
+        {
+            tail = new ListNode(val);
+            head = tail;
+        }
+        else
+        {
+            ListNode *p = new ListNode(val);
+            p->prev = tail;
+            tail->next = p;
+            tail = p;
+        }
+        size++;
+    }
+    
+    /** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
+    void addAtIndex(int index, int val) {
+        if(index <= 0)
+        {
+            addAtHead(val);
+            return;
+        }
+        if(index == size)
+        {
+            addAtTail(val);
+            return;
+        }
+        if(index > size)
+            return;
+        // ListNode *p = nullptr, *q = head;
+        // int i = 0;
+        // while(i < index && q)
+        // {
+        //     p = q;  // 插入节点的前一个节点
+        //     q = q->next;    // 插入节点的后一个节点
+        //     i++;
+        // }
+        // ListNode *cur =  new ListNode(val);
+        // p->next = cur;
+        // cur->prev = p;
+        // cur->next = q;
+        // q->prev = cur;
+        // size++;
+        ListNode *p = head;
+        int i = 0;
+        while(i < index && p)
+        {
+            p = p->next;    // 插入节点的后一个节点
+            i++;
+        }
+        ListNode *cur =  new ListNode(val);
+        cur->prev = p->prev;
+        cur->next = p;
+        p->prev->next = cur;
+        p->prev = cur;
+        size++;
+    }
+    
+    /** Delete the index-th node in the linked list, if the index is valid. */
+    void deleteAtIndex(int index) {
+        if(!head)
+            return;
+        if(index == 0)
+        {
+            ListNode *p = head;
+            head = head->next;
+            if(head)
+                // 链表有大于一个节点
+                head->prev = nullptr;
+            else
+                // 链表只有一个节点
+                tail = nullptr;
+            delete p;
+            size--;
+            return;
+        }
+        if(index == size - 1)
+        {
+            ListNode *p = tail;
+            tail = tail->prev;
+            if(tail)
+                tail->next = nullptr;
+            delete p;
+            size--;
+            return;
+        }
+        int i = 0;
+        ListNode *p = nullptr, *q = head;
+        while(q)
+        {
+            if(i == index)
+            {
+                ListNode *cur = q;
+                p->next = q->next;
+                if(q->next)
+                    q->next->prev = p;
+                delete cur;
+                size--;
+                return;
+            }
+            p = q;
+            q = q->next;
+            i++;
+        }
+    }
+};
+
+/**
+ * Your MyLinkedList object will be instantiated and called as such:
+ * MyLinkedList* obj = new MyLinkedList();
+ * int param_1 = obj->get(index);
+ * obj->addAtHead(val);
+ * obj->addAtTail(val);
+ * obj->addAtIndex(index,val);
+ * obj->deleteAtIndex(index);
+ */

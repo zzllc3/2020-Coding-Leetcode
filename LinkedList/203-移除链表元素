@@ -1,0 +1,58 @@
+//c3
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        ListNode* pre = nullptr;
+        ListNode* cur = head;
+        while(cur!=nullptr)
+        {
+            if(cur->val==val)
+            {
+                if(pre!=nullptr)
+                    pre->next = cur->next;
+                else
+                    head = head->next;//第一个匹配
+            }
+            else
+                pre = cur;
+            cur = cur->next;
+        }
+        return head;
+    }
+};
+
+//迭代
+class Solution {
+public:
+    ListNode *removeElements(ListNode* head,int val){
+        if(!head)return nullptr;
+        ListNode *cur=head,*del;
+        //每次循环我们判断cur的next节点值是否为val，确定是否删除
+        while(cur->next){
+            if(cur->next->val==val){//若cur->next的节点值为val，那么我们需要删除cur->next
+                del=cur->next;
+                cur->next=del->next;
+                delete del;
+            }
+            else{//若不为val，那么我们需要移动cur
+                cur=cur->next;
+            }
+        }
+        return head->val==val?head->next:head;//头节点匹配
+    }
+};
+
+//递归
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+            //1、递归边界
+            if(!head)
+                return nullptr;
+            //2、递去：直到到达链表尾部才开始删除重复元素
+            head->next=removeElements(head->next,val);
+            //3、递归式：相等就是删除head，不相等就不用删除
+            return head->val==val?head->next:head;
+        }
+};
+

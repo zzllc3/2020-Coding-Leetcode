@@ -1,0 +1,50 @@
+//双指针
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(head==nullptr)
+            return nullptr;
+        ListNode* cur = nullptr;
+        ListNode* pre = head;
+        while(pre!=nullptr)
+        {
+            ListNode* temp = pre->next;
+            pre->next = cur;
+            cur = pre;
+            pre = temp;
+        }
+        return cur;
+    }
+};
+
+//双指针2
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if (head == nullptr)
+            return nullptr;
+        ListNode* cur = head;
+        while (head->next != nullptr) 
+        {
+            ListNode* t = head->next->next;
+            head->next->next = cur;
+            cur = head->next;
+            head->next = t;
+        }
+        return cur;
+    }
+};
+
+//递归
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(head==nullptr||head->next==nullptr)
+            return head;
+        ListNode* ret = reverseList(head->next);
+        head->next->next = head;
+        head->next = NULL;
+        return ret;
+    }
+};
+

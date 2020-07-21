@@ -1,0 +1,57 @@
+//c3:T->O(n),S->O(n)
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        vector<int> list;
+        while(head!=nullptr)
+        {
+            list.push_back(head->val);
+            head = head->next;
+        }
+        int start = 0;
+        int end = list.size()-1;
+        while(start<=end)
+        {
+            if(list[start]!=list[end])
+                return false;
+            else
+            {
+                start++;
+                end--;
+            }
+        }
+        return true;
+    }
+};
+
+//翻转后半部分链表:T->O(n),S->O(1)
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if(!head || !head->next) 
+            return true;
+        ListNode* slow = head, * fast = head;
+        // 将slow指针移动到链表中间位置
+        while(fast && fast->next){
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        // 反转后半部分
+        ListNode* curNode = slow, *nextNode = slow->next; 
+        while(nextNode){
+            ListNode* tmp = nextNode->next;
+            nextNode->next = curNode;
+            curNode = nextNode;
+            nextNode = tmp;
+        }
+        slow->next = nullptr;
+        // 开始比较是否相等
+        while(head && curNode){
+            if(head->val != curNode->val)
+                return false;
+            head = head->next;
+            curNode = curNode->next;
+        }
+        return true;
+    }
+};

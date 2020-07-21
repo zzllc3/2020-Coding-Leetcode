@@ -1,0 +1,51 @@
+//c3
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(head==nullptr)
+            return nullptr;
+        vector<int> list;
+        while(head)
+        {
+            list.push_back(head->val);
+            head = head->next;
+        }
+        int step = k%list.size();
+        ListNode* reshead = new ListNode(-1);
+        ListNode* node = reshead;
+        for(int i=list.size()-step;i<list.size();++i)
+        {
+            node->next = new ListNode(list[i]);
+            node = node->next;
+        }
+        for(int i=0;i<list.size()-step;++i)
+        {
+            node->next = new ListNode(list[i]);
+            node = node->next;
+        }
+        return reshead->next;
+    }
+};
+
+//快慢双指针
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(!head) return NULL;
+        int n=0;
+        for(auto p=head;p;p=p->next) n++;
+        k%=n;
+        auto first=head,second=head;
+        while(k--){
+            first=first->next;
+        }
+        while(first->next){
+            first=first->next;
+            second=second->next;
+        }
+        first->next=head;
+        head=second->next;
+        second->next=NULL;
+        return head;
+    }
+};

@@ -1,0 +1,59 @@
+//快慢双指针
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        ListNode *dummy = new ListNode(-1),*slow = dummy,*fast = head;
+        dummy->next = head;
+        while(fast!=NULL&&fast->next!=NULL){ //快指针用于查找相同元素
+            if(fast->val!=fast->next->val) {                  
+                if(slow->next == fast) slow = fast; //快指针先前没查找到相同数
+                else slow->next = fast->next; //先前查找到相同数，将出现相同数的前一个数连接到相同数后第一个不同数 
+            }
+            fast = fast->next;
+        }
+        if(slow->next != fast) slow->next = fast->next; // 针对类似[1,1]的情况
+        return dummy->next;
+    }
+};
+
+//递归
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if (head == NULL)  return head;
+        if (head->next != NULL && head->val == head->next->val) { //找相同数
+            while (head->next != NULL && head->val == head->next->val)  head = head->next;  //忽略所有相同数
+            return deleteDuplicates(head->next); //从下一个不同数再开始递归
+        }
+        else head->next = deleteDuplicates(head->next);
+        return head;   
+    }
+};
+
+//迭代
+class Solution {
+public:
+    //思路：遍历链表，pre用来指向不重复节点
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head||!head->next)return head;
+        ListNode *dummy=new ListNode(-1);
+        dummy->next=head;
+        ListNode *pre=dummy;
+        while(head&&head->next){
+            if(head->val!=head->next->val){//head与head->next节点值不相等，pre指向head，也就是指向不重复值
+                pre=head;
+                head=head->next;
+            }
+            else{
+                //head为重复值子链表的最后一个节点，比如1->1->1->2的最后一个1
+                while(head&&head->next&&head->val==head->next->val){
+                    head=head->next;
+                }
+                //pre连接重复值子链表的之后第一个节点
+                pre->next=head->next;
+                head=head->next;
+            }
+        }
+        return dummy->next;
+    }
+};

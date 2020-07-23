@@ -1,0 +1,71 @@
+//c3
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        int start= 0;
+        int end = nums.size()-1;
+        vector<int> res(2,-1);;
+        while(start<=end)
+        {
+            int mid =  start+(end-start)/2;
+            if(nums[mid]<target)
+                start = mid+1;
+            else if(nums[mid]>target)
+                end = mid-1;
+            else
+            {
+                int index = mid;
+                while(mid>=0&&nums[mid]==target)
+                {
+                    mid--;
+                }
+                res[0]=mid+1;
+                while(index<nums.size()&&nums[index]==target)
+                {
+                    index++;
+                }
+                res[1]=index-1;
+                return res;
+            }
+        }
+        return {-1,-1};
+    }
+};
+
+//两次二分
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        if(nums.empty()) return {-1,-1};
+
+        int left=0;
+        int right=nums.size()-1;
+        while(left<right){
+            int mid=(left+right)>>1;
+            if(nums[mid]>=target){
+                right=mid;
+            }
+            else{
+                left=mid+1;
+            }
+        }
+        if(nums[left]!=target) return {-1,-1};
+        int start=left;
+
+        left=0;
+        right=nums.size()-1;
+        while(left<right){
+            int mid=(left+right+1)>>1;
+            if(nums[mid]<=target){
+                left=mid;
+            }
+            else{
+                right=mid-1;
+            }
+        }
+        if(nums[left]!=target) return {-1,-1};
+        int end=right;
+        
+        return {start,end};
+    }
+};

@@ -1,0 +1,95 @@
+//c3
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> list1(nums1.begin(),nums1.end());
+        unordered_set<int> list2(nums2.begin(),nums2.end());
+        nums1.assign(list1.begin(), list1.end());
+        nums2.assign(list2.begin(), list2.end());
+        vector<int> res;
+        for (unsigned int i = 0;i < nums1.size();++i)
+        {
+            for (unsigned int j = 0;j < nums2.size();++j)
+            {
+                if (nums2[j] == nums1[i])
+                    res.push_back(nums2[j]);
+            }
+        }
+        return res;
+    }
+};
+
+//c3:改进
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> list1(nums1.begin(),nums1.end());
+        unordered_set<int> list2(nums2.begin(),nums2.end());
+        nums1.assign(list1.begin(), list1.end());
+        vector<int> res;
+        for(auto num:nums1)
+        {
+            if(list2.count(num)==1)
+                res.push_back(num);
+        }
+        return res;
+    }
+};
+
+//c3:改进+(两个unordered_set)
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> list1(nums1.begin(),nums1.end());
+        unordered_set<int> ans;
+        for(auto num:nums2)
+        {
+            if(list1.count(num)==1)
+                ans.insert(num);
+        }
+        return vector<int>(ans.begin(),ans.end());
+    }
+};
+
+//c3:改进+(一个unordered_set一个vector)
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> list1(nums1.begin(),nums1.end());
+        vector<int> ans;
+        for(auto num:nums2)
+        {
+            if(list1.erase(num))
+                ans.push_back(num);
+        }
+        return ans;
+    }
+};
+
+//(一个set+双指针)
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        set<int> s;
+        sort(nums1.begin(), nums1.end());
+        sort(nums2.begin(), nums2.end());
+        vector<int>::iterator i = nums1.begin(), j = nums2.begin();
+        while(i != nums1.end() && j != nums2.end())
+        {
+            if(*i == *j)
+            {
+                s.insert(*i);
+                i++;
+                j++;
+            }
+            else if(*i < *j)
+            {
+                i++;
+            }
+            else
+                j++;
+        }
+        // 转为vector
+        return vector<int>(s.begin(), s.end());
+    }
+};

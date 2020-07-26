@@ -1,0 +1,31 @@
+class Solution {
+public:
+    vector<vector<int>> generateMatrix(int n) {
+        vector<vector<int>> matrix(n,vector<int>(n,0));
+        int u = 0; //赋值上下左右边界
+        int d = n - 1;
+        int l = 0;
+        int r = n - 1;
+        int count = 1;
+        while(true)
+        {
+            for(int i = l; i <= r; ++i) 
+                matrix[u][i] = count++; //向右移动直到最右
+            if(++ u > d) 
+                break; //重新设定上边界，若上边界大于下边界，则遍历遍历完成，下同
+            for(int i = u; i <= d; ++i) 
+                matrix[i][r] = count++; //向下
+            if(-- r < l) 
+                break; //重新设定有边界
+            for(int i = r; i >= l; --i) 
+                matrix[d][i]=count++; //向左
+            if(-- d < u) 
+                break; //重新设定下边界
+            for(int i = d; i >= u; --i) 
+                matrix[i][l] = count++; //向上
+            if(++ l > r) 
+                break; //重新设定左边界
+        }
+        return matrix;
+    }
+};

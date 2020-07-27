@@ -1,0 +1,63 @@
+//c3
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        vector<int> list;
+        for(int i=0;i<matrix.size();++i)
+        {
+            for(int j=0;j<matrix[0].size();++j)
+            {
+                list.push_back(matrix[i][j]);
+            }
+        }
+        sort(list.begin(),list.end());
+        for(int i=0;i<list.size();i++)
+        {
+            if(list[i]==target)
+                return true;
+        }
+        return false;
+    }
+};
+
+//题解2：缩小领域法
+    //因为每一行递增，每一列递增。所以我们可以从右上角往左下角找或者从左下角往右上角找。每次比较可以排除一行或者一列，时间复杂度为O(m+n)
+class Solution {
+public:
+    bool searchMatrix(vector<vector<int>>& matrix,int target){
+        if(matrix.empty()||matrix[0].empty())return 0;
+        //从左下角上右上角寻找目标值
+        int x=matrix.size()-1,y=0;
+        while(x>=0&&y<matrix[0].size())
+        {
+            if(matrix[x][y]>target)x--;//[x,y]的值比目标值大，上移
+            else if(matrix[x][y]<target)y++;//[x,y]的值比目标值小，右移
+            else return true;
+        }
+        return false;
+    }
+};
+
+//二分
+class Solution {
+  public:
+  bool searchMatrix(vector<vector<int>>& matrix, int target) {
+    int m = matrix.size();
+    if (m == 0) return false;
+    int n = matrix[0].size();
+
+    // 二分查找
+    int left = 0, right = m * n - 1;
+    int pivotIdx, pivotElement;
+    while (left <= right) {
+      pivotIdx = (left + right) / 2;
+      pivotElement = matrix[pivotIdx / n][pivotIdx % n];
+      if (target == pivotElement) return true;
+      else {
+        if (target < pivotElement) right = pivotIdx - 1;
+        else left = pivotIdx + 1;
+      }
+    }
+    return false;
+  }
+};

@@ -1,0 +1,238 @@
+//方法一：BFS
+class Solution {
+public:
+
+    //判断两个单词能否互相转换
+    bool check_transform(string &word1, string &word2){
+
+        int difference = 0;
+        for(int i = 0; i < word1.length() && difference < 2; i++){
+
+            if(word1[i] != word2[i])
+                difference++;
+        }
+
+        return difference == 1;
+    }
+
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+
+        unordered_map<string, int> wordId;  //word->ID的映射
+        vector<string> idWord;  //ID->word的映射
+        vector<vector<int>> edges;  //构造图
+
+        int id = 0;
+        for(int i = 0; i < wordList.size(); i++){
+
+            if(!wordId.count(wordList[i])){
+
+                wordId[wordList[i]] = id++;
+                idWord.push_back(wordList[i]);
+            }
+        }
+
+        if(!wordId.count(endWord))
+            return {};  //不存在结束单词，返回空
+        
+        if(!wordId.count(beginWord)){
+
+            wordId[beginWord] = id++;   //加入起始单词
+            idWord.push_back(beginWord);
+        }
+            
+
+        //构造图
+        edges.resize(id);
+        for(int i = 0; i < idWord.size(); i++){
+
+            for(int j = i + 1; j < idWord.size(); j++){
+
+                if(check_transform(idWord[i], idWord[j])){
+
+                    edges[i].push_back(j);
+                    edges[j].push_back(i);  //构造两条有向边
+                }
+            }
+        }
+
+        int endWord_id = wordId[endWord];
+        vector<vector<string>> res;
+        queue<vector<int>> q;
+        q.push(vector<int>{wordId[beginWord]}); //起始单词作为一个路径入队
+
+        //cost[id]：从起始单词出发，转换到id所代表的单词所需的次数(代价)
+        vector<int> cost(id, INT_MAX);
+        cost[wordId[beginWord]] = 0;
+
+        while(!q.empty()){
+
+            vector<int> now_path = q.front();
+            q.pop();
+
+            int last_word_id = now_path.back();
+            
+            //当前路径最后一个为结束单词时
+            if(last_word_id == endWord_id){
+
+                vector<string> temp;
+                for(int i = 0; i < now_path.size(); i++){
+
+                    temp.push_back(idWord[now_path[i]]);
+                }
+                res.push_back(temp);
+            }
+            else{
+
+                for(int i = 0; i < edges[last_word_id].size(); i++){
+
+                    //路径最后一个单词的连接单词
+                    int next = edges[last_word_id][i];
+                    if(cost[last_word_id] + 1 <= cost[next]){
+
+                        cost[next] = cost[last_word_id] + 1; //更新转换次数 
+
+                        vector<int> temp(now_path.begin(), now_path.end());
+                        temp.push_back(next);
+                        q.push(temp);
+                    }
+                }
+            }
+
+        }
+
+        return res;
+    }
+};
+
+
+//方法二：双向BFS构建搜索树，然后使用DFS搜索答案
+class Solution {
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        int size=wordList.size();
+        unordered_map<string,int> rec;//节约内存
+        vector<vector<string>> res;
+        for(int i=0;i<size;i++){
+            rec[wordList[i]]=i;//将当前单词加入到哈希表中，记录单词和索引的对应关系
+        }
+        if(rec.count(beginWord)==0){//如果单词表中没有起点单词，将其加入到wordList和哈希表中
+            wordList.push_back(beginWord);
+            rec[beginWord]=size;
+            size++;
+        }
+
+        vector<int> visited(size,false);//访问标志
+        if(rec.count(endWord)==0){//如果word List中没有结束单词，肯定无解
+            return res;
+        }
+
+        vector<vector<int>> graph(size);//要通过双向BFS构建的搜索树
+        queue<int> head2tail,tail2head;//两个队列，对应从头到尾和从尾到头的搜索方向
+        head2tail.push(rec[beginWord]);//起点入队,这里记录的是相应的单词在wordList中的索引，节约内存
+        tail2head.push(rec[endWord]);//终点入队
+        visited[rec[beginWord]]=1;//起点和由起点扩展的点的visited值为1
+        visited[rec[endWord]]=2;//终点和由终点扩展的点的visited值为2
+
+        int flag=false;//建树完成标志
+        while((head2tail.empty()!=true||tail2head.empty()!=true)){  //如果两个队列任一不为空且建树未完成   
+        //优先选择数量少的那边扩展，如果一个队列已经空了，那只能扩展另一个队列了，bfs()返回建树是否完成       
+            if(head2tail.size()==0||head2tail.size()>tail2head.size()){
+                flag=bfs(tail2head,visited,graph,wordList,rec);
+            }
+            else if(tail2head.size()==0||tail2head.size()>=head2tail.size()){
+                flag=bfs(head2tail,visited,graph,wordList,rec);
+            }   
+
+            if(flag==true){
+                break;
+            }       
+        }  
+
+        vector<string> trace;//记录遍历过程中的单词
+        trace.push_back(beginWord);
+        dfs(rec[beginWord],rec[endWord],graph,trace,wordList,res);//用dfs()遍历树，得到答案
+
+        return res;
+    }
+
+    //bfs()生成搜索树
+    bool bfs(queue<int> &work,vector<int> &visited,vector<vector<int>> &graph,
+            vector<string> &wordList,unordered_map<string,int> &rec){
+        int size=work.size();
+        bool flag=false;//是否完成建树（两个队列扩展的点是否相遇）
+
+        vector<int> subVisited=visited;//记录这次扩展时经过的点，用visited初始化
+        for(int i=0;i<size;i++){//遍历当前队列的每一个点
+            int pres=work.front();
+            work.pop();
+
+            auto neigbor=getNeigbor(wordList[pres],rec);//获取当前单词可以到达的每一个单词(的索引)
+            for(auto next:neigbor){
+                if(visited[next]==false){
+/****************************主要更改***********************************/
+                    if(subVisited[next]==false){//如果在本次扩展中没有访问了，可以加入，如果已经访问了，说明已经入队了，不再加入，就可以不用去重了，graph采用vector<vector<int>>，加快运行。
+                        work.push(next);
+                    }  
+/****************************end***************************************/                 
+                    subVisited[next]=visited[pres];//被扩展的点和扩展它的点属于同一侧，
+                    //所以visited标志相同
+                    if(visited[pres]==1){//如果时属于从头到尾的遍历方向，添加树上节点时应该时当前点
+                        //是被扩展点的父节点
+                        graph[pres].push_back(next);
+                    }
+                    else if(visited[pres]==2){//如果属于从尾到头的扩展方向，被扩展的点应该是当前点                      
+                        //的父节点
+                        graph[next].push_back(pres);
+                    }
+                }
+                else if(visited[pres]==1&&visited[next]==2){//如果被扩展点已经被访问过，则说明两个方向的BFS，
+                //已经相遇了，遍历完成了，置flag为true，树上的父子关系同上
+                    graph[pres].push_back(next);
+                    flag=true;                 
+                }
+                else if(visited[pres]==2&&visited[next]==1){
+                    graph[next].push_back(pres);
+                    flag=true;
+                }
+            }
+        }
+
+        visited=subVisited;//将本次节点访问情况赋值给visited
+        return flag;
+    }
+
+    //组合路径，搜索整个答案树
+    void dfs(int begin,int end,vector<vector<int>> &graph,vector<string>&trace,vector<string>&wordList,vector<vector<string>>&res){
+        if(begin==end){
+            res.push_back(trace);
+            return;
+        }
+
+        for(auto next:graph[begin]){
+            trace.push_back(wordList[next]);//注意，这里树上节点是单词在word List中的索引，
+            //要把它还原成单词
+            dfs(next,end,graph,trace,wordList,res);
+            trace.pop_back();
+        }
+    }  
+
+    //找到和当前单词只相差一个字母的单词
+    list<int> getNeigbor(string &str,unordered_map<string,int> &rec){//找到和当前单词只相差一个字母的单词
+        list<int> res;
+        int size=str.size();
+        for(int i=0;i<size;i++){
+            char prev=str[i];
+            for(char chr='a';chr<='z';chr++){//更改当前位置的字母为每一个可能的字母
+                if(chr!=prev){//如果当前字母就是原先的字母，不用操作
+                    str[i]=chr;
+                    if(rec.count(str)!=0){//查找更改后的单词在单词表中有无出现
+                        res.push_back(rec[str]);//记录单词的索引
+                    }
+                }              
+            }
+            str[i]=prev;//恢复原先的字母
+        }
+
+        return res;
+    }
+};

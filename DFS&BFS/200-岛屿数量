@@ -1,0 +1,126 @@
+//bfs
+class Solution {
+private:
+    void dfs(vector<vector<char>>& grid, int r, int c) {
+        int nr = grid.size();
+        int nc = grid[0].size();
+
+        grid[r][c] = '0';
+        //上下左右
+        if (r - 1 >= 0 && grid[r-1][c] == '1') dfs(grid, r - 1, c);
+        if (r + 1 < nr && grid[r+1][c] == '1') dfs(grid, r + 1, c);
+        if (c - 1 >= 0 && grid[r][c-1] == '1') dfs(grid, r, c - 1);
+        if (c + 1 < nc && grid[r][c+1] == '1') dfs(grid, r, c + 1);
+    }
+
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int nr = grid.size();
+        if (!nr) return 0;
+        int nc = grid[0].size();
+
+        int num_islands = 0;
+        for (int r = 0; r < nr; ++r) {
+            for (int c = 0; c < nc; ++c) {
+                if (grid[r][c] == '1') {
+                    ++num_islands;
+                    dfs(grid, r, c);
+                }
+            }
+        }
+
+        return num_islands;
+    }
+};
+
+//dfs
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int nr = grid.size();
+        if (!nr) return 0;
+        int nc = grid[0].size();
+
+        int num_islands = 0;
+        for (int r = 0; r < nr; ++r) {
+            for (int c = 0; c < nc; ++c) {
+                if (grid[r][c] == '1') {
+                    ++num_islands;
+                    grid[r][c] = '0';
+                    queue<pair<int, int>> neighbors;
+                    neighbors.push({r, c});
+                    while (!neighbors.empty()) {
+                        auto rc = neighbors.front();
+                        neighbors.pop();
+                        int row = rc.first, col = rc.second;
+                        if (row - 1 >= 0 && grid[row-1][col] == '1') {
+                            neighbors.push({row-1, col});
+                            grid[row-1][col] = '0';
+                        }
+                        if (row + 1 < nr && grid[row+1][col] == '1') {
+                            neighbors.push({row+1, col});
+                            grid[row+1][col] = '0';
+                        }
+                        if (col - 1 >= 0 && grid[row][col-1] == '1') {
+                            neighbors.push({row, col-1});
+                            grid[row][col-1] = '0';
+                        }
+                        if (col + 1 < nc && grid[row][col+1] == '1') {
+                            neighbors.push({row, col+1});
+                            grid[row][col+1] = '0';
+                        }
+                    }
+                }
+            }
+        }
+
+        return num_islands;
+    }
+};
+
+//并查集(没看懂)
+class Solution {
+public:
+    int n,m;
+    void connect(vector<vector<int>>& father,int i,int j,int _i,int _j){
+        while(father[i][j]!=-1){
+            int mid=father[i][j];
+            i=mid/m;j=mid-i*m;
+        }
+        while(father[_i][_j]!=-1){
+            int mid=father[_i][_j];
+            _i=mid/m;_j=mid-_i*m;
+        }
+        if(i!=_i||j!=_j){
+            father[i][j]=_i*m+_j;
+        }
+    }
+    int numIslands(vector<vector<char>>& grid) {
+        n=grid.size();
+        if(!n)return 0;
+        m=grid[0].size();
+        if(!m)return 0;
+        vector<vector<int>> father(n,vector<int>(m,-1));
+        //一遍遍历建立并查集
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]=='1'){
+                    if(i-1>=0&&grid[i-1][j]=='1')connect(father,i,j,i-1,j);
+                    if(j-1>=0&&grid[i][j-1]=='1')connect(father,i,j,i,j-1);
+                    if(i+1<n&&grid[i+1][j]=='1')connect(father,i,j,i+1,j);
+                    if(j+1<m&&grid[i][j+1]=='1')connect(father,i,j,i,j+1);
+                }
+            }
+        }
+        int res=0;
+        //二次遍历记录并查集的个数
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]=='1'&&father[i][j]==-1){
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+};

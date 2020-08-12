@@ -1,0 +1,50 @@
+//回溯
+class Solution {
+    int res = 0;
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        int sum = 0;
+        for(int n : nums){
+            sum += n;
+        }
+        if(sum < S) return res;//全是+都小，直接返回
+        backtrack(nums, sum, S, 0);
+        return res;       
+    }
+
+    void backtrack(vector<int>& nums, int sum, int s, int n){
+        if(sum == s){
+            res++;
+        }
+        for(int i = n; i < nums.size(); ++i){
+            if(sum - 2*nums[i] < s){//变号相当于减两倍
+                continue;
+            }
+            backtrack(nums, sum-2*nums[i], s, i+1);
+        }
+    } 
+};
+
+
+//01 bag
+//https://leetcode-cn.com/problems/target-sum/solution/c-dfshe-01bei-bao-by-bao-bao-ke-guai-liao/
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {
+        long sum = 0;
+        for (const int &it : nums) sum += it;
+        if ((S + sum) % 2 == 1 || S > sum) return 0;
+        S = (S + sum) / 2;//序列和等于S
+        int *dp = new int[S + 1];//dp[i],序列和等于i的解法
+        memset(dp, 0, (S + 1) * sizeof(int));
+        dp[0] = 1;
+        for (const int &it : nums) {
+            for (int j = S; j >= it; j--)
+                dp[j] += dp[j - it];
+        }
+        int ans = dp[S];
+        delete[] dp;
+        return ans;
+    }
+};
+

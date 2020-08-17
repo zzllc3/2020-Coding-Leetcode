@@ -1,0 +1,97 @@
+//双队列c3
+class MyStack {
+public:
+    deque<int> d1;
+    deque<int> dtop;
+    /** Initialize your data structure here. */
+    MyStack() {
+
+    }
+    
+    /** Push element x onto stack. */
+    void push(int x) {
+        if(dtop.empty())
+            dtop.push_back(x);
+        else
+        {
+            d1.push_back(dtop.front());
+            dtop.pop_front();
+            dtop.push_back(x);
+        }
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        int ans =  dtop.front();
+        dtop.clear();
+        deque<int> temp;
+        while(d1.size()>1)
+        {
+            temp.push_back(d1.front());
+            d1.pop_front();
+        }
+        if(!d1.empty())
+        {
+            dtop.push_back(d1.front());
+            d1.pop_front();
+            d1 = temp;
+        }
+        return ans;
+    }
+    
+    /** Get the top element. */
+    int top() {
+        return dtop.front();
+    }
+    
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return dtop.empty();
+    }
+};
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack* obj = new MyStack();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->top();
+ * bool param_4 = obj->empty();
+ */
+
+//单队列
+class MyStack {
+public:
+    /** Initialize your data structure here. */
+    MyStack() = default;
+    
+    /** Push element x onto stack. */
+    void push(int x) {
+        que.push(x);
+        int n = que.size();
+        for (int i = 0; i + 1 < n; i++) {
+            que.push(que.front());
+            que.pop();
+        }
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        int val = top();
+        que.pop();
+        return val;
+    }
+    
+    /** Get the top element. */
+    int top() {
+        return que.front();
+    }
+    
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return que.empty();
+    }
+
+private:
+    queue<int> que;
+};

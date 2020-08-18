@@ -1,0 +1,94 @@
+//c3
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        map<int, int> c3mapvisited;
+        c3mapvisited[0] =1;
+        stack<int> c3s;
+        for(int i=0;i<rooms[0].size();++i)
+        {
+            c3s.push(rooms[0][i]);
+            c3mapvisited[rooms[0][i]] = 1;
+        }
+            
+        while(!c3s.empty())
+        {
+            int i = c3s.top();
+            c3s.pop();
+            for(int j=0;j<rooms[i].size();++j)
+            {
+                if(!c3mapvisited.count(rooms[i][j]))
+                {
+                    c3s.push(rooms[i][j]);
+                    c3mapvisited[rooms[i][j]] = 1;
+                }
+            }
+        }
+        for(int i=0;i<rooms.size();++i)
+        {
+            if(!c3mapvisited.count(i))
+                return false;
+        }
+        return true;
+    }
+};
+
+//dfs
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& _rooms) {
+        rooms = _rooms;
+        dfs(0); // 一开始可以进入0号房间
+        return visited.size() == rooms.size();
+    }
+
+    void dfs(int i) {
+        visited.insert(i);
+        for (int j : rooms[i]) {
+            if (!visited.count(j)) {
+                dfs(j);
+            }
+        }
+    }
+
+private:
+    vector<vector<int>> rooms;
+    unordered_set<int> visited;
+};
+
+//bfs
+class Solution {
+public:
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        if(rooms[0].empty()){
+            if(rooms.size() == 1)
+                return true;
+            return false;
+        } 
+        queue<int> keys;
+        vector<int> entered(rooms.size(), 0);//最后查找是否还存在无法进入的房间
+        unordered_set<int> visited;//房间是否已经被打开
+        
+        keys.push(0);
+        
+        while(!keys.empty()) {
+            int index = keys.front();
+            keys.pop();
+            visited.insert(index);
+            entered[index]++;
+            
+            for(int i = 0; i < rooms[index].size(); i++) {
+                int next = rooms[index][i];
+                if(visited.find(next) == visited.end()){
+                    keys.push(next);//没访问过，加入
+                }
+            }
+        }
+        
+        for(int i = 0; i < entered.size(); i++) {
+            if(entered[i] == 0)
+                return false;
+        }
+        return true;
+    }
+};

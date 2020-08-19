@@ -1,0 +1,14 @@
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int res = 0;
+        for(int i = 0;i < 32;++i){//二进制32位
+            int sum = 0;
+            for(int j = 0;j < nums.size();++j){
+                sum += (nums[j] >> i) & 1;//从低到高，每一位上1出现的次数一定是3的倍数+1或0
+            }
+            res ^= (sum % 3) << i;//利用异或还原出来，也可以利用按位与还原res |= (sum % 3) << i;
+        }
+        return res;
+    }
+};

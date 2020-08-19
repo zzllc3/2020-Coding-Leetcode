@@ -1,0 +1,44 @@
+//c3
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+        unordered_map<char, int> smap;
+        unordered_map<char, int> tmap;
+        for(int i=0;i<s.size();++i)
+        {
+            if(!smap.count(s[i]))
+                smap.insert({s[i],1});
+            else
+                smap[s[i]]++;
+        }
+        for(int i=0;i<t.size();++i)
+        {
+            if(!tmap.count(t[i]))
+                tmap.insert({t[i],1});
+            else
+                tmap[t[i]]++;
+        }
+        for(auto iter=tmap.begin();iter!=tmap.end();++iter)
+        {
+            if(!smap.count(iter->first))
+                return iter->first;
+            else
+            {
+                if(smap[iter->first]!=iter->second)
+                    return iter->first;
+            }
+        }
+        return '0';
+    }
+};
+
+//异或
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+        for (int i = 0; i < s.size(); ++i) t[0] ^= s[i];
+        for (int i = 1; i < t.size(); ++i) t[0] ^= t[i];
+        return t[0];
+    }
+};
+

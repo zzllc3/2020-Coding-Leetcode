@@ -3,7 +3,7 @@ class Solution {
 public:
 int minimumTotal(vector<vector<int>>& triangle) {
         //构造二维dp表，自顶向下动态规划
-        //表达式为：dp[i][j]=max(dp[i-1][j-1]+tri[i][j],dp[i-1][j]+tri[i][j])如果上一行有j的话
+        //表达式为：dp[i][j]=min(dp[i-1][j-1]+tri[i][j],dp[i-1][j]+tri[i][j])如果上一行有j的话
         int len = triangle.size();
         if (len == 1)return triangle[0][0];
         vector<vector<int>>dp(len, vector<int>(len,0x3f3f3f3f));

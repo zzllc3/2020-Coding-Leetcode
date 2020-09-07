@@ -1,0 +1,54 @@
+//贪心，低买高卖
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) 
+    {
+        int minc3 = prices[0];
+        int res = 0;
+        for(int i=1;i<prices.size();++i)
+        {
+            if(prices[i]>minc3)
+            {
+                res += prices[i]-minc3;       
+            }
+            minc3 = prices[i];
+        }
+        return res;
+    }
+};
+
+//dp
+// 假设数组dp[i][0]表示第i天不持有股票时的利益：dp[0][0] = 0
+// dp[i][1]表示第i天持有股票时的利益:dp[0][1] = -prices[0]
+// 持有状态：
+// 1.今天买入：则昨天是不持有的状态，当天利益为dp[i-1][0]-prices[i]；
+// 2.前一天也持有：今天没有卖出，当天利益为dp[i-1][1]；
+// 取其大着作为当天持有状态下的利益。
+// 非持有状态：
+// 1.今天卖出：则昨天是持有的状态，当天利益为dp[i-1][1]+prices[i]；
+// 2.前一天也不持有：则今天也没有买入，当天利益就是前一天利益，即dp[i-1][0]；
+// 取其大者作为当天非持有状态下的利益。
+// 最后一天不持有股票时的利益即为最大利润.
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        // 动态规划解法
+        
+        // 0.初始判断
+        if(prices.empty()) return 0;
+        
+        int dp[prices.size()][2];
+        // 1.初始状态
+        dp[0][0] = 0;
+        dp[0][1] = -prices[0];
+
+        // 2.状态转移
+        for(int i = 1; i<prices.size();i++){
+            // 3.状态转移方程
+            dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i]);
+            dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i]);
+        }
+        return dp[prices.size()-1][0];
+    }
+};

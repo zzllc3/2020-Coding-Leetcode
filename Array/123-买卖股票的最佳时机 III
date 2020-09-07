@@ -1,0 +1,30 @@
+//按照121思路两次0-i,i+1-n-1超时
+
+//优化
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if(n == 0) return 0;
+        int minPri = prices.front(), maxPro1 = 0; // 顺序遍历的最小pirce和最大利润
+        int maxPri = prices.back(), maxPro2 = 0;  // 逆序遍历的最大price和最大利润
+        vector<int> profits1(n,0), profits2(n,0); // 顺序和逆序的利润分布
+        for(int i = 0; i < n; i++){
+            if(prices[i] <= minPri) minPri = prices[i];
+            else maxPro1 = max(maxPro1, prices[i]-minPri);
+            profits1[i] = maxPro1;
+            if(prices[n-i-1] >= maxPri) maxPri = prices[n-i-1];
+            else maxPro2 = max(maxPro2, maxPri-prices[n-i-1]);
+            profits2[n-i-1] = maxPro2;
+        }
+        int maxPro = profits1[n-1];
+        for(int i = 0; i < n-1; i++){
+            maxPro = max(maxPro, profits1[i]+profits2[i+1]);
+        }
+        return maxPro;
+    }
+};
+//https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/solution/shun-ni-liang-ci-bian-li-qiu-jie-by-fxyz-0/
+
+//dp
+//https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/solution/mai-mai-gu-piao-zui-jia-shi-ji-iiidong-tai-gui-hua/

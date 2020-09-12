@@ -1,0 +1,221 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+
+//1.归并递归，不符合复杂度要求
+//https://leetcode-cn.com/problems/sort-list/solution/148-pai-xu-lian-biao-jiu-yin-wei-zhe-ge-ti-bei-wu-/
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) 
+    {
+        if(head==nullptr || head->next==nullptr)
+            return head;
+            //快慢指针断链
+        ListNode* slow=head,*fast=head,*pre=head;
+        while(fast && fast->next)
+        {
+            //记录slow的前驱，针对链表有偶数个结点的情况
+            pre=slow;
+            slow=slow->next;
+            fast=fast->next->next;
+        }       
+        pre->next=nullptr;
+        //明确递归函数的返回结果是什么，sortList的返回结果就是已经排序号的链表的头节点；
+        //而merge的返回结果就是两个链表合并好之后的链表的头节点
+        return merge(sortList(head),sortList(slow));
+    }
+    ListNode* merge(ListNode* l1,ListNode* l2)
+    {
+        if(l1==nullptr)
+            return l2;
+        if(l2==nullptr)
+            return l1;
+        if(l1->val<=l2->val)
+        {
+            l1->next=merge(l1->next,l2);
+            return l1;
+        }
+        else
+        {
+            l2->next=merge(l1,l2->next);
+            return l2;
+        }
+    }
+};
+
+//2.归并迭代，符合，看不懂
+ ListNode* merge(ListNode* l1,ListNode* l2)
+    {
+        ListNode* dummy=new ListNode(0);
+        ListNode* p=dummy;
+        while(l1 && l2)
+        {
+            if(l1->val < l2->val)
+            {
+                p->next=l1;
+                l1=l1->next;
+                p=p->next;
+            }
+            else
+            {
+                p->next=l2;
+                l2=l2->next;
+                p=p->next;
+            }
+        }
+        p->next=l1 ? l1 : l2;
+        return dummy->next;
+    }
+    ListNode* sortList(ListNode* head) 
+    {
+        if(head==nullptr || head->next==nullptr)
+            return head;
+        int length=0;
+        ListNode* p=head;
+        //先求得链表的长度，然后根据长度来cut
+        while(p)
+        {
+            length++;
+            p=p->next;
+        }
+        //第一次cut 1，然后根据归并的思路，cut的大小依次*2，边界条件位size<length，
+        //因为size==n表示的是链表的每个长度为n的段已经是有序的了，执行循环的目的就是把有序的长度为n的段连起来，
+        //因此当size>=length时，表示长度为size的段已经有序，即原链表已经归并完成，结束循环。
+        //只有当size<length时才表明没有归并完成，进入循环继续归并
+        ListNode* dummy=new ListNode(0);
+        dummy->next=head;
+        for(int size=1;size<length;size*=2)
+        {
+            //cur表示待分割链表的第一个，tail表示已经合并好的链表的最后一个，类似于147题中的beign和tail
+            ListNode* cur=dummy->next;
+            ListNode* tail=dummy;
+            while(cur)
+            {
+                ListNode* left=cur;
+                ListNode* right=cut(left,size);//left后有size个
+                cur=cut(right,size);
+                tail->next=merge(left,right);
+                while(tail->next)
+                    tail=tail->next;
+            }
+        }
+        return dummy->next;
+    }
+};
+
+//3.快排，不符合空间复杂度，只交换链表值
+void swap(Node* a, Node* b) {
+   int tmp = a->val;
+   a->val = b->val;
+   b->val = tmp;
+}
+
+//找到分割点
+Node* getSeparator(Node* pBegin, Node* pEnd) {
+   Node* p = pBegin;
+   Node* q = pBegin->next;
+   int key = p->val;
+   while (q != pEnd) {
+       if (q->val < key) {
+           p = p->next;
+           swap(p, q);
+       }
+       q = q->next;
+   }
+   swap(pBegin, p);
+   return p;
+}
+
+//快速排序
+void fastSort(Node* pBegin, Node* pEnd) {
+   if (pBegin != pEnd) {
+       Node* separator = getSeparator(pBegin, pEnd);
+       fastSort(pBegin, separator);
+       fastSort(separator->next, pEnd);
+   }
+}
+
+//创建链表
+Node* createNode() {
+   int in;
+   Node* n;
+   cin >> in;
+   if (in == 1000) {
+       n = NULL;
+   }
+   else {
+       n = new Node();
+       n->val = in;
+       n->next = createNode();
+   }
+   return n;
+}
+
+int main() {
+   Node* n1 = createNode();
+   cout << "++++++++++++++排序前+++++++++++++++++" << endl;
+   Node* cur = n1;
+   while (cur != NULL) {
+       cout << cur->val << endl;
+       cur = cur->next;
+   }
+
+
+   fastSort(n1, NULL);
+   cout << "++++++++++++++排序后+++++++++++++++++" << endl;
+   cur = n1;
+   while (cur != NULL) {
+       cout << cur->val << endl;
+       cur = cur->next;
+   }
+   return 0;
+}
+
+//4.快排，指针交换
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        return quickSort(head);
+    }
+
+    ListNode quickSort(ListNode head){
+        if(head == null || head.next == null) return head;
+        
+        int pivot = head.val;
+        // 链表划分
+        ListNode ls = new ListNode(-1), rs = new ListNode(-1);
+        ListNode l = ls, r = rs, cur = head;
+        
+        while(cur != null){
+            if(cur.val < pivot){
+                l.next = cur;
+                l = l.next;
+            }else{
+                r.next = cur;
+                r = r.next;
+            }
+            cur = cur.next;
+        }
+        l.next = rs.next;
+        r.next = null;
+        
+        // 递归调用,先重排右边的,再把指针置空,再重排左边的
+        // 和归并排序很像的
+        ListNode right = quickSort(head.next);
+        head.next = null;
+        ListNode left = quickSort(ls.next);
+        
+        // 拼接左半部分和右半部分
+        cur = left;
+        while(cur.next != null){
+            cur = cur.next;
+        }
+        cur.next = right;
+        return left;
+        
+    }
+

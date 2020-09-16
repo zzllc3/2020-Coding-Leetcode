@@ -1,0 +1,21 @@
+//c3
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main()
+{
+    vector<string> res;
+	string line, t;
+	getline(cin,line);
+	stringstream linestream;
+	linestream.str(line);
+	while(linestream>>t)
+		res.push_back(t);
+    string ans = res.back();
+    cout<<ans.size();
+	return 0;	
+}
+

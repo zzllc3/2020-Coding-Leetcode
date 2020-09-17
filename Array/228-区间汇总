@@ -1,0 +1,93 @@
+//c3
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        vector<string> res;
+        if (nums.size() == 0)
+            return res;
+        else if (nums.size() == 1)
+        {
+            res.push_back(to_string(nums[0]));
+            return res;
+        }
+        int left = nums[0];
+        int right = nums[0];
+        string s;
+        for (int i = 1; i < nums.size(); ++i)
+        {
+            if (nums[i] - 1 == nums[i - 1])
+            {
+                right = nums[i];
+                if (i == nums.size() - 1)
+                {
+                    s = to_string(left) + '-' + '>' + to_string(right);
+                    res.push_back(s);
+                    return res;
+                }
+                else if (i == nums.size() - 2 && nums[i + 1] - 1 == nums[i])
+                {
+                    s = to_string(left) + '-' + '>' + to_string(right + 1);
+                    res.push_back(s);
+                    return res;
+                }
+                else if (nums[i + 1] - 1 > nums[i])
+                {
+                    if (left == right)
+                        s = to_string(left);
+                    else
+                        s = to_string(left) + '-' + '>' + to_string(right);
+                    res.push_back(s);
+                    left = nums[i + 1];
+                    right = nums[i + 1];
+                    if (i == nums.size() - 2)
+                    {
+                        s = to_string(left);
+                        res.push_back(s);
+                        return res;
+                    }
+                    i++;
+                }
+                else
+                    continue;
+            }
+            else
+            {
+                if (left == right)
+                    s = to_string(left);
+                else
+                    s = to_string(left) + '-' + '>' + to_string(right);
+                res.push_back(s);
+                left = nums[i];
+                right = nums[i];
+                if (i == nums.size() - 1)
+                {
+                    s = to_string(left);
+                    res.push_back(s);
+                    return res;
+                }
+            }
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        int n = nums.size();
+        vector<string> ans;
+
+        int i = 0;
+        while (i < n) {
+            int j = i;
+            while (j + 1 < n && nums[j + 1] == nums[j] + 1) j++;
+
+            if (i == j) ans.push_back(to_string(nums[i]));
+            else 
+                ans.push_back(to_string(nums[i]) + "->" + to_string(nums[j]));
+                
+            i = j + 1;
+        }
+        return ans;
+    }
+};

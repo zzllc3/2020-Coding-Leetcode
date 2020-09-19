@@ -1,0 +1,37 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+//递归
+class Solution {
+public:
+    unordered_map<int,int> map;
+    TreeNode* constructFromPrePost(vector<int>& pre, vector<int>& post) {
+        return build(pre, post, 0, pre.size() - 1, 0, post.size() - 1);
+    }
+    TreeNode* build(vector<int>& pre, vector<int>& post, int pL,int pR, int ptL, int ptR)
+    {
+        if (pL > pR || ptL > ptR) 
+            return nullptr;//下标超过了，说明则该子树为空
+        TreeNode * root = new TreeNode(pre[pL]);
+        if(pL==pR)
+            return root;
+        //pre[pL+1]是左子树根，据此找到其在post中的index
+        int index = ptL;
+        while(post[index] != pre[pL+1]){
+            index++;
+        }
+        //然后根据分界线index可以划分pre与post左右子树部分
+        //post: post_start:index左 ; index+1:post_end-1 右; post_end 根
+        //pre: pre_start根 ; pre_start+1:pre_start+1+ (index-post_start); pre_end-(post_end-1-index-1) :pre_end
+        root->left = build(pre,post,pL+1,pL+1+ (index-ptL), ptL, index);
+        root->right = build(pre,post,pR-(ptR-1-index-1), pR, index+1, ptR-1);
+        return root;
+    }
+};

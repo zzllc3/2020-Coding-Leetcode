@@ -1,0 +1,45 @@
+//暴力超时
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        int n = nums.size();
+        for(int i=0;i<k%n;++i)
+        {
+            int pre = nums[n-1];
+            for(int j=0;j<n;++j)
+            {
+                int temp = nums[j];
+                nums[j] = pre;
+                pre = temp;
+            }
+        }
+    }
+};
+
+//额外数组
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+       vector<int> res(nums.size(),-1);
+       for(int i=0;i<nums.size();++i)
+       {
+           res[(i+k)%nums.size()] = nums[i];
+       }
+       for(int i=0;i<nums.size();++i)
+       {
+           nums[i] = res[i];
+       }
+    }
+};
+
+//三次反转
+class Solution {
+public:
+    void rotate(vector<int>& nums, int k) {
+        int n = nums.size();
+        k = k%n;
+        reverse(nums.begin(),nums.end());
+        reverse(nums.begin(),nums.begin()+k);
+        reverse(nums.begin()+k,nums.end());
+    }
+};

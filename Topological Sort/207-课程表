@@ -1,0 +1,117 @@
+//无环就可以
+class Solution {
+public:
+    vector<int>visit;
+    bool dfs(int v,vector<vector<int>>& g)
+    {
+        if (g[v].size() == 0)   //没相邻的节点了，返回true
+            return true;
+       
+        if (visit[v] == -1)   //走这节点没环，返回true
+            return true;
+        
+        if (visit[v] == 1)  //被标记过了，存在环，返回false
+            return false;
+
+        visit[v] = 1;  //标记
+
+        bool res = true;
+        for (int i = 0; i < g[v].size(); i++)  //访问v节点的所有相连接的节点，对于每个节点都进行dfs
+        {
+            res = dfs(g[v][i], g);
+            if (res == false)
+                break;
+        }
+        visit[v] =-1 ;  //回溯时设置visit为-1
+        return res;
+    }
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> g(numCourses);
+        visit = vector<int>(numCourses + 1, 0);
+        //建立有向邻接表
+        for (int i = 0; i < prerequisites.size(); i++)
+            g[prerequisites[i][0]].push_back(prerequisites[i][1]);
+
+        bool res = true;
+          for(int i =0;i<numCourses;i++)  //对每个节的所有相连接的点进行dfs（深度优先遍历）
+            for (int j = 0; j < g[i].size(); j++)
+            {
+                 res = dfs(g[i][j], g);
+                 if (res == false)
+                     return res;
+            }
+        return res;
+    }
+};
+
+/*
+方法1：BFS+入度表
+首先生成入度表indegreesindegrees,因为(u,v)(u,v)的uu表示终点，prerequisites[0]prerequisites[0]是uu
+
+需要找到入度为0的那个顶点，将这个indexindex推入队列queuequeue
+
+当queuequeue非空的时候，不断转这个队列
+
+弹出元素prepre作为当前的顶点，课程numCoursesnumCourses--，开始在prerequiresprerequires中找这个顶点，这个prepre会作为下个顶点的前置顶点，所以找的是prerequisites[1]prerequisites[1]
+每次找到顶点prepre时，将其入度-1
+将入度为0的顶点的索引加入到queuequeue中
+返回numCourses == 0numCourses==0
+
+作者：a-fei-8
+链接：https://leetcode-cn.com/problems/course-schedule/solution/ke-cheng-biao-san-jian-ke-zhi-ke-cheng-biao-iladyb/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+*/
+ public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[] indegrees = new int[numCourses];
+        for (int[] p : prerequisites) {
+            indegrees[p[0]]++;//入度
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < indegrees.length; i++) {
+            if (indegrees[i] == 0) queue.offer(i);//添加入度为0的点
+        }
+        while (!queue.isEmpty()) {
+            int pre = queue.poll();//删除
+            numCourses--;
+            for (int[] p : prerequisites) {
+                if (p[1] != pre) continue;
+                indegrees[p[0]]--;
+                if (indegrees[p[0]] == 0) queue.offer(p[0]);
+            }
+        }
+        return numCourses == 0;
+    }
+
+//方法2：DFS+邻接矩阵
+public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[][] adjacency = new int[numCourses][numCourses];
+        int[] flags = new int[numCourses];
+        for (int[] p : prerequisites) {
+            adjacency[p[1]][p[0]] = 1;
+        }
+        for (int i = 0; i < numCourses; i++) {
+            if (!canFinish1stDFS(adjacency, flags, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean canFinish1stDFS(int[][] adjacency, int[] flags, int i) {
+        if (flags[i] == 1) return false;
+        if (flags[i] == -1) return true;
+        flags[i] = 1;
+        for (int j = 0; j < adjacency.length; j++) {
+            if (adjacency[i][j] == 1 && !canFinish1stDFS(adjacency, flags, j)) {
+                return false;
+            }
+        }
+        flags[i] = -1;
+        return true;
+    }
+
+作者：a-fei-8
+链接：https://leetcode-cn.com/problems/course-schedule/solution/ke-cheng-biao-san-jian-ke-zhi-ke-cheng-biao-iladyb/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

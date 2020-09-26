@@ -1,0 +1,36 @@
+//BFS+入度
+vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+    vector<int> inDegree(numCourses, 0);
+    vector<vector<int>> lst(numCourses, vector<int>());
+    for (auto v : prerequisites) {
+        inDegree[v[0]]++;
+        lst[v[1]].push_back(v[0]);
+    }
+
+    queue<int> que;
+    for (auto i = 0; i < inDegree.size(); i++) {
+        if (inDegree[i] == 0) {
+            que.push(i);
+        }
+    }
+
+    vector<int> ans;
+    while (!que.empty()) {
+        auto q = que.front();
+        que.pop();
+        ans.push_back(q);
+
+        for (auto l : lst[q]) {
+            if (--inDegree[l] == 0) {
+                que.push(l);
+            }
+        }
+    }
+
+    return (ans.size() == numCourses) ? ans : vector<int>();
+}
+
+作者：ikaruga
+链接：https://leetcode-cn.com/problems/course-schedule-ii/solution/210-by-ikaruga/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

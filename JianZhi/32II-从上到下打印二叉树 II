@@ -1,0 +1,78 @@
+//层序DFS
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        int level = 0;
+        dfs(res,root,level);
+        return res;
+    }
+
+    void dfs(vector<vector<int>>& res,TreeNode* root, int level)
+    {
+        if(!root)
+            return;
+        if(level>=res.size())
+            res.push_back(vector<int>());
+        res[level].push_back(root->val);
+        if(root->left)
+            dfs(res, root->left, level+1);
+        if(root->right)
+            dfs(res, root->right, level+1);
+        return;
+    }
+    
+};
+
+//层序BFS-c3
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        queue<pair<TreeNode*,int>> qt;
+        if(!root)
+            return {};
+        qt.push({root,0});
+        vector<vector<int>> res;
+        while(!qt.empty())
+        {
+            pair<TreeNode*,int>cur_val_index = qt.front();
+            qt.pop();
+            if(cur_val_index.second>=res.size())
+                res.push_back(vector<int>());
+            res[cur_val_index.second].push_back(cur_val_index.first->val);
+            if(cur_val_index.first->left)
+                qt.push({cur_val_index.first->left,cur_val_index.second+1});
+            if(cur_val_index.first->right)
+                qt.push({cur_val_index.first->right,cur_val_index.second+1});
+        }
+        return res;
+    }
+};
+
+//层序BFS-优化
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        queue<TreeNode*> qt;
+        if(!root)
+            return {};
+        qt.push(root);
+        vector<vector<int>> res;
+        while(!qt.empty())
+        {
+            vector<int> temp;
+            for(int i=qt.size();i>0;--i)
+            {
+                TreeNode* root = qt.front();
+                qt.pop();
+                temp.push_back(root->val);
+                if(root->left)
+                    qt.push(root->left);
+                if(root->right)
+                    qt.push(root->right);
+            }
+            res.push_back(temp);
+        }
+        return res;
+    }
+};

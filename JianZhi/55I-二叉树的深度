@@ -1,0 +1,61 @@
+//c3 dfs
+class Solution {
+public:
+    int res = 0;
+    void dfs(TreeNode* root, int level)
+    {
+        if(root==nullptr)
+            return;
+        if(root->left==nullptr&&root->right==nullptr)
+        {
+            res = max(res, level);
+            return;
+        }
+        else
+        {
+            dfs(root->left,level+1);
+            dfs(root->right,level+1);
+        }
+    }
+
+    int maxDepth(TreeNode* root) {
+        if(!root)
+            return res;
+        int level=1;
+        dfs(root,level);
+        return res;
+    }
+};
+
+//c3-bfs
+class Solution {
+public:
+    int res = 0;
+    int maxDepth(TreeNode* root) {
+        if(!root)
+            return res;
+        queue<TreeNode*> qt;
+        qt.push(root);
+        while(!qt.empty())
+        {
+            for(int i=qt.size();i>0;--i)
+            {
+                if(qt.front()->left)
+                    qt.push(qt.front()->left);
+                if(qt.front()->right)
+                    qt.push(qt.front()->right);
+                qt.pop();
+            }
+            res++;
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == NULL) return 0;
+        return 1 + max(maxDepth(root->left), maxDepth(root->right));
+    }
+};

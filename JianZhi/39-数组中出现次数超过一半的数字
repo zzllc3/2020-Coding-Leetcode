@@ -1,0 +1,39 @@
+//c3
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        map<int, int> mt;
+        for (int i = 0;i < nums.size();++i)
+        {
+            if (mt.find(nums[i]) == mt.end())
+                mt.insert({ nums[i],1 });
+            else
+                mt[nums[i]]++;
+            if (mt.find(nums[i]) != mt.end() && mt[nums[i]] > nums.size() / 2)
+                return nums[i];
+        }
+        return -1;
+    }
+};
+
+//排序后中间的数字
+
+//O(1)复杂度
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int count = 1, cur = nums[0];
+        for(int i = 1; i < nums.size(); i++) {
+            if(cur != nums[i]) {
+                --count;
+                if(count < 0) {
+                    cur = nums[i];
+                    count = 1;
+                }
+            }
+            else ++count;
+        }
+        return cur;
+    }
+};
+链接：https://leetcode-cn.com/problems/shu-zu-zhong-chu-xian-ci-shu-chao-guo-yi-ban-de-shu-zi-lcof/solution/onshi-jian-fu-za-du-o1kong-jian-fu-za-du-zhao-chu-/

@@ -1,0 +1,51 @@
+//递归
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if(!root) return true;
+        return judge(root -> left, root -> right);
+    }
+    bool judge(TreeNode *l, TreeNode *r)
+    {
+        if(!l && !r) return true; // 如果既没有左子树也没有右子树，true
+        if(!l || !r) return false; // 如果有右没左或者有左没右，false
+        if(l -> val != r -> val) return false; // 如果左右都有，但是值不相等，false
+        return judge(l -> left, r -> right) && judge(l -> right, r -> left);
+    }
+};
+
+//迭代
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if (root ==NULL)
+            return true;
+        //用队列保存节点
+        queue<TreeNode*> q;
+        //将根节点的左右孩子放到队列中
+        q.push(root->left);
+        q.push(root->right);
+        while(!q.empty())
+        {
+            //从队列中取出两个节点，再比较这两个节点
+            TreeNode* A = q.front();
+            q.pop();
+            TreeNode* B = q.front();
+            q.pop();
+            //如果两个节点都为空就继续循环，两者有一个为空就返回false
+            if (A==NULL && B==NULL)
+                continue;
+            if (A==NULL || B==NULL)
+                return false;
+            if (A->val != B->val)
+                return false;
+            //将左子树的左孩子， 右子树的右孩子放入队列
+            q.push(A->left);
+            q.push(B->right);
+            //将左子树的右孩子，右子树的左孩子放入队列
+            q.push(A->right);
+            q.push(B->left);
+        }
+        return true;
+    }
+};

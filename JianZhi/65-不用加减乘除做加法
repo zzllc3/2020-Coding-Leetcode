@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int add(int a, int b) {
+        while (b) {
+            int carry = (unsigned int)(a & b) << 1;#进位，c++ 不允许负数左移操作，所以要转换成无符号整数。
+            a ^= b;#不算进位的“和”
+            b = carry;
+        }
+        return a;
+    }
+};
+
+//递归
+class Solution {
+public:
+    int add(int a, int b) {
+        return b ? add(a^b, (unsigned int)(a&b)<<1) : a;
+    }
+};

@@ -1,0 +1,115 @@
+//c3
+class Solution {
+public:
+    vector<int> getLeastNumbers(vector<int>& arr, int k) {
+        sort(arr.begin(),arr.end());
+        vector<int> res;
+        for(int i=0;i<k;++i)
+            res.push_back(arr[i]);
+        return res;
+    }
+};
+
+//快排partition index=k-1
+class Solution {
+public:
+    vector<int> getLeastNumbers(vector<int>& arr, int k) {
+        int n=arr.size();
+        if(n==k) return arr;
+        if(n<k || k<=0 || n==0) return vector<int>();
+        int l=0,r=n-1;
+        int index=partition(arr,l,r);
+        while(index!=k-1){
+            if(index>k-1) r=index-1;
+            else l=index+1;
+            index=partition(arr,l,r);
+        }
+        return vector<int>(arr.begin(),arr.begin()+k);
+    }
+    int partition(vector<int>&arr,int l,int r){
+        int temp=arr[l];
+        while(l<r){
+            while(l<r && arr[r]>=temp) r--;
+            arr[l]=arr[r];
+            while(l<r && arr[l]<=temp) l++;
+            arr[r]=arr[l]; 
+        }
+        arr[l]=temp;
+        return l;
+    }
+};
+
+//堆排序1
+class Solution {
+public:
+    vector<int> getLeastNumbers(vector<int>& arr, int k) {
+        vector<int> res(k);
+        priority_queue<int,vector<int>,less<int>> que;
+        for(int i=0;i<arr.size();i++){
+            que.push(arr[i]);
+            if(que.size()>k) que.pop();
+        }
+        for(int i=k-1;i>=0;i--){
+            res[i]=que.top();
+            que.pop();
+        }
+        return res;
+    }
+};
+
+//堆排序2
+class Solution {
+    enum { MAXN = 10000 };
+    int n;
+    int heap[MAXN];
+    
+    inline int& getRef(int root) {
+        return heap[root-1];
+    }
+public:
+    Solution() : n(0) {}
+    void push(int v) {
+        heap[n++] = v;
+        for(int pos = n, nextPos = pos>>1; pos > 1 
+                && getRef(pos) > getRef(nextPos); pos = nextPos, nextPos >>= 1) {
+            swap(getRef(pos), getRef(nextPos));
+        }
+    }
+    int pop() {
+       swap(getRef(1), getRef(n));
+       int res = heap[--n];
+       for(int root = 1; ; ) {
+           int left = root<<1;
+           int right = root<<1|1;
+           if(right <= n && getRef(root) < max(getRef(left), getRef(right))) {
+               if(getRef(left) > getRef(right)) {
+                   swap(getRef(left), getRef(root));
+                   root = left;
+               } else {
+                   swap(getRef(right), getRef(root));
+                   root = right;
+               }
+           } else if (left <= n && getRef(root) < getRef(left)) {
+                swap(getRef(left), getRef(root));
+                root = left;
+                break;
+           } else {
+               break;
+           }
+       }
+       return res;
+    }
+    int size() const {
+        return n;
+    }
+    vector<int> getLeastNumbers(vector<int>& arr, int k) {
+        for(auto v : arr) {
+            this->push(v);
+            if(this->size() > k) {
+                this->pop();
+            }
+        }
+        
+        return vector<int>(heap, heap+k);
+    }
+};

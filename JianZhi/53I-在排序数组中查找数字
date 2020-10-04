@@ -1,0 +1,77 @@
+//c3
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        map<int,int> st;
+        for(int i=0;i<nums.size();++i)
+        {
+            if(st.find(nums[i])==st.end())
+                st.emplace(nums[i],1);
+            else
+                st[nums[i]]++;
+        }
+        if(st.find(target)==st.end())
+            return 0;
+        else
+            return st[target];
+    }
+};
+
+//c3
+class Solution {
+public:
+    int search(vector<int>& nums, int target) {
+        int l=0, r=nums.size()-1;
+        while(l<=r)
+        {
+            while(nums[l]<target&&l<nums.size()-1)
+                l++;
+            while(nums[r]>target&&r>=1)
+                r--;
+            if(l<=r&&nums[l]==target)
+                return r-l+1;
+            else
+                break;
+        }
+        return 0;
+    }
+};
+
+//两次二分
+class Solution {
+public:
+    int search(vector<int>& nums, int target)
+    {
+        int len = nums.size();
+        if(len == 0)    return 0;
+        int left = 0, right = len - 1;
+        int boundaryLeft ,boundaryRight;    //target的左右边界
+        //第一次二分法求出右边界：boundaryRight
+        while(left <= right)    //正是left=right时的这最后这次循环，left又右移了一次使得left成为右边界
+        {
+            int mid = left + (right - left) / 2;
+            if(nums[mid] <= target) //等号在left这里
+                left = mid + 1;
+            else
+                right = mid - 1;    
+        }   //退出循环时left为最右target的右边元素，right则应为最右边的target（若target存在）
+
+        if(right >= 0 && nums[right] != target) //血的教训，第一个条件一定放前面
+            return 0;
+        boundaryRight = left;
+
+        //第二次二分法求出左边界：boundaryLeft
+        right = left, left = 0;
+        while(left <= right)    //正是left=right时的这最后这次循环，right又左移了一次使得right成为左边界
+        {
+            int mid = left + (right - left) / 2;
+            if(nums[mid] >= target) //等号在right这里
+                right = mid - 1;
+            else
+                left = mid + 1;
+        }   //退出循环时right为最左target的左边元素
+        boundaryLeft = right;
+
+        return boundaryRight - boundaryLeft - 1;
+    }
+};

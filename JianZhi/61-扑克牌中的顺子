@@ -1,0 +1,39 @@
+class Solution {
+public:
+    bool isStraight(vector<int>& nums) {
+        bool m[15];
+        memset(m, 0, sizeof(m));
+        int minValue = 14, maxValue = 0;
+        for (int item : nums) {
+            if (item == 0) {
+                continue;
+            }
+            if (m[item]) {
+                return false;
+            }
+            m[item] = true;
+            minValue = min(minValue, item);
+            maxValue = max(maxValue, item);            
+        }
+        return maxValue - minValue + 1 <= 5;
+    }
+};
+
+class Solution {
+public:
+    bool isStraight(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int zero = 0;
+        for (int i = 0; i < 4; i ++) {
+            if (nums[i] == 0) {
+                zero++;
+                continue;
+            } 
+            if (nums[i] == nums[i+1]) {
+                return false;
+            }
+            zero -= nums[i+1]-nums[i] - 1;
+        }
+        return zero >= 0;
+    }
+};

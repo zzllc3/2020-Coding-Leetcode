@@ -1,0 +1,25 @@
+//贪心
+class Solution {
+public:
+    int cuttingRope(int n) {
+        if (n < 4)return n - 1;
+        int a = n / 3, b = n % 3;
+        if (b == 0)return a = pow(3, a);
+        if (b == 1)return a = pow(3, a-1) * 4;
+        if (b == 2)return a = pow(3, a) * 2;
+        return a;
+    }
+};
+
+//dp
+class Solution {
+    public: int cuttingRope(int n) {
+        vector<int> dp(n+1,0);
+        for (int i = 2; i <= n; i++) {
+            for (int j = 1; j < i; j++) {
+                dp[i]= max(dp[i], max(j * (i - j), j * dp[i - j]));//j * (i - j)不接着剪，j * dp[i - j]是i-j部分接着剪
+            }
+        }
+        return dp[n];
+    }
+};

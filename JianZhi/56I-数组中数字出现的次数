@@ -1,0 +1,25 @@
+class Solution {
+public:
+    vector<int> singleNumbers(vector<int>& nums) {
+        //用于将所有的数异或起来
+        int k = 0;
+        for (int num : nums) {
+            k ^= num;
+        }
+        //获得k中最低位的1,K里面两数不同，故肯定有一位1是不同的，可以以此区分
+        int mask = 1;
+        while ((k & mask) == 0) {
+            mask <<= 1;
+        }
+        int a = 0; 
+        int b = 0;
+        for (int num : nums) {
+            if ((num & mask) == 0) {
+                a ^= num;  // 找到那位不为1的元素， 其余数为偶数，会自动消去
+            } else {
+                b ^= num;  // 找到那位为1的元素
+            }
+        }
+        return {a, b};
+    }
+};

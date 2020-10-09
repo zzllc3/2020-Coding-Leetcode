@@ -1,0 +1,45 @@
+//c3
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int minc3 = INT_MAX;
+        int res = 0;
+        for(int i=0;i<prices.size();++i)
+        {
+            if(prices[i]<minc3)
+                minc3 = prices[i];
+            res = max(res,prices[i]-minc3);
+        }
+        return res;
+    }
+};
+
+//dp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        if (prices.size() == 0) {
+            return 0;
+        }
+        int dp[200010][2];
+        dp[0][0] = 0, dp[0][1] = -prices[0];//不持股，持股
+        for (int i = 1; i < prices.size(); i ++) {
+            dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i]);//前一天没有持股，前一天持股今天卖了
+            dp[i][1] = max(dp[i-1][1], 0 - prices[i]);//昨天持股，一直没持股今天买了（只能买买一次）
+        }
+        return dp[prices.size() - 1][0];
+    }
+};
+
+//优化dp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int cur_0 = 0, cur_1 = INT_MIN;
+        for (int i = 0; i < prices.size(); i ++) {
+            cur_0 = max(cur_0, cur_1 + prices[i]);
+            cur_1 = max(cur_1, 0 - prices[i]);
+        }
+        return cur_0;
+    }
+};

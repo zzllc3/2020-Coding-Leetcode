@@ -1,0 +1,48 @@
+//c3
+class Solution {
+public:
+    int maxValue(vector<vector<int>>& grid) {
+        int res = grid[0][0];
+        vector<vector<int>> dp(grid.size(),vector<int>(grid[0].size(),0));
+        //初始化
+        dp[0][0] = grid[0][0];
+        for(int i=1;i<dp[0].size();++i)
+        {
+            dp[0][i] = dp[0][i-1]+grid[0][i];
+        }
+        for(int i=1;i<dp.size();++i)
+        {
+            dp[i][0] = dp[i-1][0]+grid[i][0];
+        }
+        //dp
+        for(int i=1;i<dp.size();++i)
+        {
+            for(int j=1;j<dp[i].size();++j)
+            {
+                dp[i][j] = max(dp[i-1][j],dp[i][j-1])+grid[i][j];
+            }
+        }
+        return dp[grid.size()-1][grid[0].size()-1];
+    }
+};
+
+//dp优化
+int maxValue(vector<vector<int>>& grid) {
+        int r = grid.size(), c = grid[0].size();
+        vector<int> dp(c+1,0);
+        for(int i = 0; i < r; i++)
+        {
+            for(int j = 0; j < c; j++)
+            {
+                dp[j+1] = max(dp[j],dp[j+1]) + grid[i][j];   //max（当前行左边的值，上一行的值）
+            }
+        }
+        return dp[c];
+    }
+    
+};
+
+作者：ztbrown
+链接：https://leetcode-cn.com/problems/li-wu-de-zui-da-jie-zhi-lcof/solution/cyou-hua-ban-ben-yu-yuan-shi-ban-ben-dong-tai-gui-/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

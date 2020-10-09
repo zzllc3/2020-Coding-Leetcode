@@ -1,0 +1,46 @@
+//暴力超时
+class Solution {
+public:
+    bool ok(int num)
+    {
+        while(num%2==0)
+            num /=2;
+        while(num%3==0)
+            num /=3;
+        while(num%5==0)
+            num /=5;
+        return (num==1)?true:false;
+    } 
+    int nthUglyNumber(int n) {
+        int num = 0;
+        int index = 0;
+        while(index<n)
+        {
+            num++;
+            if(ok(num))
+                index++;
+        }
+        return num;
+    }
+};
+
+//合并三个有序数组
+class Solution {
+public:
+	int nthUglyNumber(int n) {
+		vector<int> dp(n, 0);
+		dp[0] = 1;
+		int p2 = 0, p3 = 0, p5 = 0;
+		for (int i = 1; i < n; i++) {
+			dp[i] = min(min(dp[p2] * 2, dp[p3] * 3), dp[p5] * 5);
+			if (dp[i] == dp[p2] * 2)
+				p2++;
+			if (dp[i] == dp[p3] * 3)
+				p3++;
+			if (dp[i] == dp[p5] * 5)
+				p5++;
+		}
+		return dp[n - 1];
+	}
+};
+

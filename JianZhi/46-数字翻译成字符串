@@ -1,0 +1,45 @@
+//回溯
+class Solution {
+public:
+    int backtrace(string& str, int pos) {
+        int n = str.size();
+        if (pos == n) {
+            return 1;
+        }
+        if (pos == n-1 || str[pos] == '0' || str.substr(pos, 2) > "25") {
+            return backtrace(str, pos+1);
+        }
+        return backtrace(str, pos+1) + backtrace(str, pos+2);
+    }
+    int translateNum(int num) {
+        string str = to_string(num);
+        return backtrace(str, 0);
+    }
+};
+
+//dp
+class Solution {
+public:
+    int translateNum(int num) {
+        string str = to_string(num);
+        int dp[11];
+        dp[0] = 1;
+        dp[1] = 1;
+        for (int i = 1; i < str.size(); i ++) {
+            if (str[i-1] == '0' || str.substr(i-1, 2) > "25" ) {
+                dp[i+1] = dp[i];
+            } else {
+                dp[i+1] = dp[i] + dp[i-1];
+            }
+        }
+        return dp[str.size()];
+    }
+};
+
+class Solution {
+public:
+    int translateNum(int num) {
+        if (num < 10) return 1;
+        return (num%100 < 10 || num%100 > 25) ? translateNum(num/10) : translateNum(num/10) + translateNum(num/100);
+    }
+};

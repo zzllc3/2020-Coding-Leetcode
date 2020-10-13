@@ -1,0 +1,58 @@
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) {
+        if(postorder.empty()) return true;
+        int len = postorder.size();
+        return recursion(postorder, 0, len - 1);
+    }
+    bool recursion(vector<int>& postorder, int left, int right)
+    {
+        if(left >= right) return true; // 没有左子树（比如[5,4,3,2,1]），true
+        int root = postorder[right];
+        int pos = left; // 必须要设置一个 pos 变量保存 left，不能直接操作 left！
+        for(; pos<right; ++pos)
+        {
+            // 找到右子树起点
+            if(postorder[pos] > root) break;
+        }
+        for(int j=pos; j<right; ++j)
+        {
+            // 如果右子树部分有小于 root 的，false
+            if(postorder[j] < root) return false;
+        }
+        // 看左子树是否也是后序遍历。如果前面不设置 pos 的话，这里就会是 (postorder,0,left-1)，会严重超时
+        if(!recursion(postorder, left, pos - 1)) return false; 
+        if(!recursion(postorder, pos, right - 1)) return false;// 看右子树是否也是后序遍历
+        return true;
+    }
+};
+
+
+//单调栈
+class Solution {
+public:
+    bool verifyPostorder(vector<int>& postorder) 
+    {
+        stack<int> stk;// 单调栈,其中的元素单调递增
+        // 表示上一个根节点的元素，这里可以把postorder的最后一个元素root看成无穷大节点的左孩子l
+        int pre_elem = INT_MAX;
+
+        //逆向遍历（根->右->左）
+        for(int i = postorder.size() - 1; i >= 0; --i)
+        {
+            // 左子树元素必须要小于单调栈中的根和右子树元素，否则就不是二叉搜索树
+            if(postorder[i] > pre_elem) return false;
+
+            while(!stk.empty() && postorder[i] < stk.top())
+            {
+                // 数组元素小于单调栈的元素了，发生递减，说明左子树出现
+                // 需要找到这个左子树的父节点，递增栈中第一个比其大的元素就是他的父节点
+                // 一边寻找一边弹出比它大（比它的父节点也大）的右子树
+                pre_elem = stk.top();
+                stk.pop();
+            }
+            // 如果找到了符合要求的父节点，将父节点也弹出，自己入栈，继续构造单调栈
+            stk.push(postorder[i]);
+        }
+        return true;
+    }

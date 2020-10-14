@@ -1,0 +1,51 @@
+//C3
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<TreeNode*>res;
+    void findroot(TreeNode* A, TreeNode* B)
+    {
+        if(A)
+        {
+            if(A->val==B->val)
+                res.push_back(A);
+
+            findroot(A->left,B);
+            findroot(A->right,B);
+
+        }
+    }
+    bool check(TreeNode* A, TreeNode* B)
+    {
+        if(B)
+        {
+            if(A&&(A->val==B->val))
+            {
+                return check(A->left,B->left)&&check(A->right,B->right);
+            }
+            else
+                return false;
+        }
+        else
+            return true;
+    }
+    bool isSubStructure(TreeNode* A, TreeNode* B) {
+        if(!B)
+            return false;
+        findroot(A,B);
+        for(int i=0;i<res.size();++i)
+        {
+            if(check(res[i],B))
+                return true;
+        }
+        return false;
+    }
+};

@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int strToInt(string str) {
+        int num = 0;
+        int i = 0;
+        int flag = 1;
+        // 优先判空
+        if (str.empty()) return 0;
+        // 再次判空格，有则过滤
+        while (str[i] == ' ') i++;
+        // 判断有无符号，有则更新flag
+        if (str[i] == '-') flag = -1;
+        // 不管'+','-',均向前+1
+        if (str[i] == '-' || str[i] == '+') i++;
+        // 排除非数字字符，计算数字
+        while(i < str.size() && isdigit(str[i])) {
+            int r = str[i] - '0';
+            // 溢出提前判断，int范围 （-2147483648 ，2147483647）
+            if ((num > INT_MAX/10) || (num == INT_MAX/10 && r > 7)) {
+                return flag > 0 ? INT_MAX : INT_MIN;
+            }
+            num = num*10 + r;
+            i++;
+        }
+        return flag > 0 ? num : -num;
+    }
+};

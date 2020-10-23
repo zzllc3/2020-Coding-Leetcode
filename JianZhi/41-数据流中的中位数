@@ -1,0 +1,126 @@
+//c3超时
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    vector<int> st;
+    MedianFinder() {
+    }
+    
+    void addNum(int num) {
+        st.push_back(num);
+    }
+    
+    double findMedian() {
+        sort(st.begin(),st.end());
+        if(st.size()%2!=0)
+            return st[st.size()/2];
+        else
+            return double(st[st.size()/2-1]+st[st.size()/2])/2;
+    }
+};
+
+//二分查找插入
+class MedianFinder {
+    vector<int> store; // resize-able container
+
+public:
+    // Adds a number into the data structure.
+    void addNum(int num)
+    {
+        if (store.empty())
+            store.push_back(num);
+        else
+            store.insert(lower_bound(store.begin(), store.end(), num), num);     // binary search and insertion combined
+    }
+
+    // Returns the median of current data stream
+    double findMedian()
+    {
+        int n = store.size();
+        return n & 1 ? store[n / 2] : (store[n / 2 - 1] + store[n / 2]) * 0.5;
+    }
+};
+
+//红黑树
+class MedianFinder {
+public:
+	/** initialize your data structure here. */
+	MedianFinder() :s(), i1(s.begin()), i2(s.begin()) { }
+
+	void addNum(int num) {
+		if (s.empty()) {//s中没有元素
+			s.insert(num);
+			i1 = s.begin();
+			i2 = s.begin();
+			return;
+		}
+		s.insert(num);
+		if (s.size() & 1) {//s中奇数个元素
+			if (num < *i1) 
+				i1--;
+			else 
+				i2++;
+		}
+		else {//s中偶数个元素
+			if (num < *i1) 
+				i2--;
+			else if (*i2 <= num) 
+				i1++;
+			else if (*i1 <= num && num < *i2) {
+				i1++;
+				i2--;
+			}
+		}
+		return;
+	}
+	double findMedian() {
+		return s.size() & 1 ? *i1 : (double(*i1) + double(*i2))*0.5;
+	}
+private:
+	multiset<int> s;
+	multiset<int>::iterator i1;
+	multiset<int>::iterator i2;
+};
+
+//class MedianFinder {
+public:
+    priority_queue<int, vector<int>, less<int> > leftQue;   // 大根堆,用于保存较小的那一半元素
+    priority_queue<int, vector<int>, greater<int> > rightQue;   // 小根堆,用于保存较大的那一半元素
+    //大根堆的堆顶（堆中最大元素）也小于小根堆的堆顶（堆中最小元素）
+    MedianFinder() {
+    }
+    
+    void addNum(int num) 
+    {
+        //左.size=右.size 说明总元素数为偶数，此时将元素放入左边的大根堆
+        if(leftQue.size() == rightQue.size())
+        {
+            //为了保持左右平衡（元素数目差小于等于1）
+            //大根堆中插入一个新元素后，需要将调整后的大根堆堆顶拿出来放到小根堆中
+            leftQue.push(num);
+            rightQue.push(leftQue.top());
+            leftQue.pop();
+        }
+        //此时总元素数为奇数，此时将元素放入右边的小根堆
+        else
+        {
+            //同理
+            //小根堆中插入一个新元素后，需要将调整后的小根堆堆顶拿出来放到大根堆中
+            rightQue.push(num);
+            leftQue.push(rightQue.top());
+            rightQue.pop();
+        }
+    }
+    
+    double findMedian() 
+    {
+        double res = 0.0;
+        //左.size=右.size 说明总元素数为偶数，中位数即是（左最大+右最小）/2
+        if(leftQue.size() == rightQue.size())
+            res = ((double)leftQue.top() + (double)rightQue.top()) / 2;
+        //总元素数为奇数时，新元素是插入右边小根堆的，所以此时中位数就是小根堆堆顶
+        else
+            res = rightQue.top();
+        return res;
+    }
+};
